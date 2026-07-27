@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oculist/features/authentication/presentation/view_models/login_view_model.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -22,10 +24,21 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
+      return;
+    }
+
+    final viewModel = context.read<LoginViewModel>();
+
+    await viewModel.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    if (!mounted) {
       return;
     }
 
@@ -42,6 +55,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final viewModel = context.watch<LoginViewModel>();
 
     return Scaffold(
       body: Container(
@@ -119,19 +133,7 @@ class _LoginViewState extends State<LoginView> {
                               hintText: 'nombre@oculist.com',
                               prefixIcon: Icon(Icons.email_outlined),
                             ),
-                            validator: (value) {
-                              final email = value?.trim() ?? '';
-
-                              if (email.isEmpty) {
-                                return 'Ingresa tu correo electrónico';
-                              }
-
-                              if (!email.contains('@')) {
-                                return 'Ingresa un correo electrónico válido';
-                              }
-
-                              return null;
-                            },
+                            validator: viewModel.validateEmail,
                           ),
                           const SizedBox(height: 18),
                           TextFormField(
@@ -160,26 +162,26 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                               ),
                             ),
-                            validator: (value) {
-                              final password = value ?? '';
-
-                              if (password.isEmpty) {
-                                return 'Ingresa tu contraseña';
-                              }
-
-                              if (password.length < 6) {
-                                return 'La contraseña debe tener al menos 6 caracteres';
-                              }
-
-                              return null;
-                            },
+                            validator: viewModel.validatePassword,
                           ),
                           const SizedBox(height: 26),
                           FilledButton.icon(
                             key: const Key('login_button'),
-                            onPressed: _submitForm,
-                            icon: const Icon(Icons.login_rounded),
-                            label: const Text('Iniciar sesión'),
+                            onPressed: viewModel.isLoading ? null : _submitForm,
+                            icon: viewModel.isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.login_rounded),
+                            label: Text(
+                              viewModel.isLoading
+                                  ? 'Ingresando...'
+                                  : 'Iniciar sesión',
+                            ),
                           ),
                           const SizedBox(height: 20),
                           Text(
