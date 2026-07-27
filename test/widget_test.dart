@@ -14,6 +14,8 @@ void main() {
   ) async {
     await tester.pumpWidget(const OculistApp());
 
+    await tester.pumpAndSettle();
+
     expect(find.text('OCULIST'), findsOneWidget);
 
     expect(
