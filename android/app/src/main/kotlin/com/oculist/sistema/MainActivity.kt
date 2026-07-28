@@ -1,4 +1,4 @@
-package com.example.oculist
+package com.oculist.sistema
 
 import io.flutter.embedding.android.FlutterActivity
 
