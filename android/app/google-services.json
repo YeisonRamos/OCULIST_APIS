@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "638752494916",
+    "project_id": "oculist-sistema-inteligente",
+    "storage_bucket": "oculist-sistema-inteligente.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638752494916:android:72fabc5db98d4d7f917311",
+        "android_client_info": {
+          "package_name": "com.oculist.sistema"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJRQvBqELA4PpzZkyjloMRC0nnJ3ds6IU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
