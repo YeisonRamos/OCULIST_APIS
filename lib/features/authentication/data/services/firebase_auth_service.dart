@@ -21,4 +21,8 @@ class FirebaseAuthService {
   }
 
   User? get currentUser => _firebaseAuth.currentUser;
+
+  Stream<User?> authStateChanges() {
+    return _firebaseAuth.authStateChanges();
+  }
 }

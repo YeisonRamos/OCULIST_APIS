@@ -19,6 +19,10 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {}
+  @override
+  Stream<String?> authStateChanges() {
+    return Stream.value(null);
+  }
 }
 
 class FakeUserRepository implements UserRepository {

@@ -4,4 +4,6 @@ abstract interface class AuthRepository {
   Future<void> signOut();
 
   String? get currentUserId;
+
+  Stream<String?> authStateChanges();
 }

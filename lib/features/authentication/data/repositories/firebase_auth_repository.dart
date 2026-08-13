@@ -64,4 +64,9 @@ class FirebaseAuthRepository implements AuthRepository {
         return 'No fue posible iniciar sesión. Intenta nuevamente.';
     }
   }
+
+  @override
+  Stream<String?> authStateChanges() {
+    return _authService.authStateChanges().map((user) => user?.uid);
+  }
 }

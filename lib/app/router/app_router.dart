@@ -6,13 +6,32 @@ import 'package:oculist/features/authentication/presentation/views/login_view.da
 import 'package:provider/provider.dart';
 import 'package:oculist/features/dashboard/presentation/views/administrator_dashboard_view.dart';
 import 'package:oculist/features/dashboard/presentation/views/optician_dashboard_view.dart';
+import 'package:oculist/features/authentication/presentation/view_models/session_view_model.dart';
+import 'package:oculist/features/authentication/presentation/views/session_view.dart';
+import 'package:oculist/features/dashboard/presentation/view_models/dashboard_view_model.dart';
 
 final class AppRouter {
   const AppRouter._();
 
   static final GoRouter router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/session',
     routes: [
+      GoRoute(
+        path: '/session',
+        name: 'session',
+        builder: (context, state) {
+          final authRepository = context.read<AuthRepository>();
+          final userRepository = context.read<UserRepository>();
+
+          return ChangeNotifierProvider(
+            create: (_) => SessionViewModel(
+              authRepository: authRepository,
+              userRepository: userRepository,
+            ),
+            child: const SessionView(),
+          );
+        },
+      ),
       GoRoute(
         path: '/login',
         name: 'login',
@@ -34,7 +53,12 @@ final class AppRouter {
         path: '/optico',
         name: 'opticianDashboard',
         builder: (context, state) {
-          return const OpticianDashboardView();
+          final authRepository = context.read<AuthRepository>();
+
+          return ChangeNotifierProvider(
+            create: (_) => DashboardViewModel(authRepository: authRepository),
+            child: const OpticianDashboardView(),
+          );
         },
       ),
 
@@ -42,7 +66,12 @@ final class AppRouter {
         path: '/administrador',
         name: 'administratorDashboard',
         builder: (context, state) {
-          return const AdministratorDashboardView();
+          final authRepository = context.read<AuthRepository>();
+
+          return ChangeNotifierProvider(
+            create: (_) => DashboardViewModel(authRepository: authRepository),
+            child: const AdministratorDashboardView(),
+          );
         },
       ),
     ],
