@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oculist/app/oculist_app.dart';
+import 'package:oculist/features/authentication/domain/models/user_profile.dart';
 import 'package:oculist/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:oculist/features/authentication/domain/repositories/user_repository.dart';
 
 class FakeAuthRepository implements AuthRepository {
   @override
@@ -19,11 +21,29 @@ class FakeAuthRepository implements AuthRepository {
   Future<void> signOut() async {}
 }
 
+class FakeUserRepository implements UserRepository {
+  @override
+  Future<UserProfile> getUserById(String uid) async {
+    return UserProfile(
+      uid: uid,
+      nombre: 'Usuario de prueba',
+      correo: 'prueba@oculist.com',
+      rol: UserRole.optico,
+      activo: true,
+    );
+  }
+}
+
 void main() {
   testWidgets('Muestra correctamente la pantalla de inicio de sesión', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(OculistApp(authRepository: FakeAuthRepository()));
+    await tester.pumpWidget(
+      OculistApp(
+        authRepository: FakeAuthRepository(),
+        userRepository: FakeUserRepository(),
+      ),
+    );
 
     await tester.pumpAndSettle();
 

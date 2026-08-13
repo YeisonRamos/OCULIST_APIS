@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:oculist/features/authentication/presentation/view_models/login_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:oculist/features/authentication/domain/models/user_profile.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -43,9 +45,27 @@ class _LoginViewState extends State<LoginView> {
     }
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Inicio de sesión correcto.')),
-      );
+      final profile = viewModel.userProfile;
+
+      if (profile == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No fue posible obtener el perfil del usuario.'),
+          ),
+        );
+
+        return;
+      }
+
+      switch (profile.rol) {
+        case UserRole.optico:
+          context.go('/optico');
+          break;
+
+        case UserRole.administrador:
+          context.go('/administrador');
+          break;
+      }
 
       return;
     }

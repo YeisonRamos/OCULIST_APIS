@@ -1,18 +1,27 @@
 import 'package:flutter/foundation.dart';
 import 'package:oculist/features/authentication/domain/exceptions/auth_exception.dart';
+import 'package:oculist/features/authentication/domain/exceptions/user_profile_exception.dart';
+import 'package:oculist/features/authentication/domain/models/user_profile.dart';
 import 'package:oculist/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:oculist/features/authentication/domain/repositories/user_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  LoginViewModel({required AuthRepository authRepository})
-    : _authRepository = authRepository;
+  LoginViewModel({
+    required AuthRepository authRepository,
+    required UserRepository userRepository,
+  }) : _authRepository = authRepository,
+       _userRepository = userRepository;
 
   final AuthRepository _authRepository;
+  final UserRepository _userRepository;
 
   bool _isLoading = false;
   String? _errorMessage;
+  UserProfile? _userProfile;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  UserProfile? get userProfile => _userProfile;
 
   String? validateEmail(String? value) {
     final email = value?.trim() ?? '';
@@ -50,20 +59,61 @@ class LoginViewModel extends ChangeNotifier {
     }
 
     _errorMessage = null;
+    _userProfile = null;
     _setLoading(true);
 
+    var authenticated = false;
+
     try {
-      await _authRepository.signIn(email: email.trim(), password: password);
+      final uid = await _authRepository.signIn(
+        email: email.trim(),
+        password: password,
+      );
+
+      authenticated = true;
+
+      final profile = await _userRepository.getUserById(uid);
+
+      if (!profile.activo) {
+        await _safeSignOut();
+
+        _errorMessage =
+            'Esta cuenta se encuentra inactiva. Contacta al administrador.';
+
+        return false;
+      }
+
+      _userProfile = profile;
 
       return true;
     } on AuthException catch (error) {
       _errorMessage = error.message;
       return false;
+    } on UserProfileException catch (error) {
+      if (authenticated) {
+        await _safeSignOut();
+      }
+
+      _errorMessage = error.message;
+      return false;
     } catch (_) {
+      if (authenticated) {
+        await _safeSignOut();
+      }
+
       _errorMessage = 'Ocurrió un error inesperado. Intenta nuevamente.';
+
       return false;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  Future<void> _safeSignOut() async {
+    try {
+      await _authRepository.signOut();
+    } catch (_) {
+      // Evita ocultar el error original si falla el cierre de sesión.
     }
   }
 
