@@ -1,0 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class FirestoreClientService {
+  FirestoreClientService({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
+
+  final FirebaseFirestore _firestore;
+
+  Future<String> createClient({
+    required String nombres,
+    required String apellidos,
+    required String telefono,
+    String? documentoIdentidad,
+  }) async {
+    final document = _firestore.collection('clientes').doc();
+
+    final data = <String, dynamic>{
+      'nombres': nombres,
+      'apellidos': apellidos,
+      'telefono': telefono,
+      'fechaRegistro': FieldValue.serverTimestamp(),
+      'activo': true,
+    };
+
+    if (documentoIdentidad != null && documentoIdentidad.isNotEmpty) {
+      data['documentoIdentidad'] = documentoIdentidad;
+    }
+
+    await document.set(data);
+
+    return document.id;
+  }
+}
