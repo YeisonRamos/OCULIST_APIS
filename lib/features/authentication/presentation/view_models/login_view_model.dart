@@ -1,9 +1,18 @@
 import 'package:flutter/foundation.dart';
+import 'package:oculist/features/authentication/domain/exceptions/auth_exception.dart';
+import 'package:oculist/features/authentication/domain/repositories/auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  LoginViewModel({required AuthRepository authRepository})
+    : _authRepository = authRepository;
+
+  final AuthRepository _authRepository;
+
   bool _isLoading = false;
+  String? _errorMessage;
 
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   String? validateEmail(String? value) {
     final email = value?.trim() ?? '';
@@ -35,13 +44,24 @@ class LoginViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<void> login({required String email, required String password}) async {
+  Future<bool> login({required String email, required String password}) async {
+    if (_isLoading) {
+      return false;
+    }
+
+    _errorMessage = null;
     _setLoading(true);
 
     try {
-      // Simulación temporal.
-      // Después será reemplazada por Firebase Authentication.
-      await Future<void>.delayed(const Duration(milliseconds: 800));
+      await _authRepository.signIn(email: email.trim(), password: password);
+
+      return true;
+    } on AuthException catch (error) {
+      _errorMessage = error.message;
+      return false;
+    } catch (_) {
+      _errorMessage = 'Ocurrió un error inesperado. Intenta nuevamente.';
+      return false;
     } finally {
       _setLoading(false);
     }

@@ -33,7 +33,7 @@ class _LoginViewState extends State<LoginView> {
 
     final viewModel = context.read<LoginViewModel>();
 
-    await viewModel.login(
+    final success = await viewModel.login(
       email: _emailController.text.trim(),
       password: _passwordController.text,
     );
@@ -42,10 +42,18 @@ class _LoginViewState extends State<LoginView> {
       return;
     }
 
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inicio de sesión correcto.')),
+      );
+
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text(
-          'Formulario válido. La conexión con Firebase será el siguiente paso.',
+          viewModel.errorMessage ?? 'No fue posible iniciar sesión.',
         ),
       ),
     );
@@ -130,7 +138,7 @@ class _LoginViewState extends State<LoginView> {
                             autofillHints: const [AutofillHints.email],
                             decoration: const InputDecoration(
                               labelText: 'Correo electrónico',
-                              hintText: 'nombre@oculist.com',
+                              //hintText: 'optica@gmail.com',
                               prefixIcon: Icon(Icons.email_outlined),
                             ),
                             validator: viewModel.validateEmail,
