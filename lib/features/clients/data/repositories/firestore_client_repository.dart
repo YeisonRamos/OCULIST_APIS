@@ -20,7 +20,6 @@ class FirestoreClientRepository implements ClientRepository {
     final cleanNames = nombres.trim();
     final cleanLastNames = apellidos.trim();
     final cleanPhone = telefono.trim();
-
     final cleanDocument = documentoIdentidad?.trim();
 
     try {
@@ -51,5 +50,32 @@ class FirestoreClientRepository implements ClientRepository {
         'Ocurrió un error inesperado al registrar al cliente.',
       );
     }
+  }
+
+  @override
+  Stream<List<Client>> watchActiveClients() {
+    return _clientService.watchActiveClients().map((snapshot) {
+      final clients = snapshot.docs.map((document) {
+        final data = document.data();
+
+        final timestamp = data['fechaRegistro'];
+
+        return Client(
+          id: document.id,
+          nombres: data['nombres'] as String? ?? '',
+          apellidos: data['apellidos'] as String? ?? '',
+          telefono: data['telefono'] as String? ?? '',
+          documentoIdentidad: data['documentoIdentidad'] as String?,
+          fechaRegistro: timestamp is Timestamp
+              ? timestamp.toDate()
+              : DateTime.fromMillisecondsSinceEpoch(0),
+          activo: data['activo'] as bool? ?? false,
+        );
+      }).toList();
+
+      clients.sort((a, b) => b.fechaRegistro.compareTo(a.fechaRegistro));
+
+      return clients;
+    });
   }
 }

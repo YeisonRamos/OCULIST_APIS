@@ -59,6 +59,11 @@ class FakeClientRepository implements ClientRepository {
       activo: true,
     );
   }
+
+  @override
+  Stream<List<Client>> watchActiveClients() {
+    return Stream.value([]);
+  }
 }
 
 void main() {

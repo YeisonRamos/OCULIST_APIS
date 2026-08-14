@@ -14,6 +14,8 @@ import 'package:oculist/features/dashboard/presentation/view_models/dashboard_vi
 import 'package:oculist/features/dashboard/presentation/views/administrator_dashboard_view.dart';
 import 'package:oculist/features/dashboard/presentation/views/optician_dashboard_view.dart';
 import 'package:provider/provider.dart';
+import 'package:oculist/features/clients/presentation/view_models/client_list_view_model.dart';
+import 'package:oculist/features/clients/presentation/views/client_list_view.dart';
 
 final class AppRouter {
   const AppRouter._();
@@ -68,6 +70,22 @@ final class AppRouter {
           return ChangeNotifierProvider(
             create: (_) => DashboardViewModel(authRepository: authRepository),
             child: const OpticianDashboardView(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/clientes',
+        name: 'clients',
+        redirect: (context, state) {
+          return _protectRoute(context, requiredRole: UserRole.optico);
+        },
+        builder: (context, state) {
+          final clientRepository = context.read<ClientRepository>();
+
+          return ChangeNotifierProvider(
+            create: (_) =>
+                ClientListViewModel(clientRepository: clientRepository),
+            child: const ClientListView(),
           );
         },
       ),

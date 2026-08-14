@@ -30,4 +30,11 @@ class FirestoreClientService {
 
     return document.id;
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> watchActiveClients() {
+    return _firestore
+        .collection('clientes')
+        .where('activo', isEqualTo: true)
+        .snapshots();
+  }
 }

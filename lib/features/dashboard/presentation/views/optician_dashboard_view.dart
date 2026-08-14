@@ -74,10 +74,10 @@ class OpticianDashboardView extends StatelessWidget {
 
             FilledButton.icon(
               onPressed: () {
-                context.push('/clientes/registrar');
+                context.push('/clientes');
               },
-              icon: const Icon(Icons.person_add_alt_1_outlined),
-              label: const Text('Registrar cliente'),
+              icon: const Icon(Icons.people_outline_rounded),
+              label: const Text('Gestionar clientes'),
             ),
           ],
         ),

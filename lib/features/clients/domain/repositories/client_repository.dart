@@ -7,4 +7,6 @@ abstract interface class ClientRepository {
     required String telefono,
     String? documentoIdentidad,
   });
+
+  Stream<List<Client>> watchActiveClients();
 }
