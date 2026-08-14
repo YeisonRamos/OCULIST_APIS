@@ -14,10 +14,12 @@ class ClientDetailViewModel extends ChangeNotifier {
   final String _clientId;
 
   bool _isLoading = false;
+  bool _isDeactivating = false;
   Client? _client;
   String? _errorMessage;
 
   bool get isLoading => _isLoading;
+  bool get isDeactivating => _isDeactivating;
   Client? get client => _client;
   String? get errorMessage => _errorMessage;
 
@@ -34,6 +36,30 @@ class ClientDetailViewModel extends ChangeNotifier {
       _errorMessage = 'Ocurrió un error inesperado al cargar el cliente.';
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> deactivateClient() async {
+    if (_isDeactivating) {
+      return false;
+    }
+
+    _isDeactivating = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _clientRepository.deactivateClient(_clientId);
+      return true;
+    } on ClientException catch (error) {
+      _errorMessage = error.message;
+      return false;
+    } catch (_) {
+      _errorMessage = 'Ocurrió un error inesperado al desactivar al cliente.';
+      return false;
+    } finally {
+      _isDeactivating = false;
       notifyListeners();
     }
   }

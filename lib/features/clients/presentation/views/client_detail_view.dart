@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oculist/features/clients/presentation/view_models/client_detail_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ClientDetailView extends StatefulWidget {
   const ClientDetailView({super.key});
@@ -26,6 +27,76 @@ class _ClientDetailViewState extends State<ClientDetailView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Detalle del cliente')),
       body: _buildContent(context, viewModel),
+    );
+  }
+
+  Future<void> _editClient(String clientId) async {
+    final updated = await context.push<bool>('/clientes/$clientId/editar');
+
+    if (!mounted) {
+      return;
+    }
+
+    if (updated == true) {
+      await context.read<ClientDetailViewModel>().loadClient();
+    }
+  }
+
+  Future<void> _confirmDeactivate() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Desactivar cliente'),
+          content: const Text(
+            '¿Está seguro de que desea desactivar este cliente? '
+            'El registro no será eliminado y podrá conservarse su historial.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Desactivar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    final viewModel = context.read<ClientDetailViewModel>();
+
+    final success = await viewModel.deactivateClient();
+
+    if (!mounted) {
+      return;
+    }
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cliente desactivado correctamente.')),
+      );
+
+      context.pop();
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          viewModel.errorMessage ?? 'No fue posible desactivar al cliente.',
+        ),
+      ),
     );
   }
 
@@ -99,6 +170,33 @@ class _ClientDetailViewState extends State<ClientDetailView> {
             icon: Icons.verified_user_outlined,
             title: 'Estado',
             value: client.activo ? 'Activo' : 'Inactivo',
+          ),
+          const SizedBox(height: 32),
+
+          FilledButton.icon(
+            onPressed: () {
+              _editClient(client.id);
+            },
+            icon: const Icon(Icons.edit_outlined),
+            label: const Text('Editar cliente'),
+          ),
+
+          const SizedBox(height: 12),
+
+          OutlinedButton.icon(
+            onPressed: viewModel.isDeactivating ? null : _confirmDeactivate,
+            icon: viewModel.isDeactivating
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.person_off_outlined),
+            label: Text(
+              viewModel.isDeactivating
+                  ? 'Desactivando...'
+                  : 'Desactivar cliente',
+            ),
           ),
         ],
       ),

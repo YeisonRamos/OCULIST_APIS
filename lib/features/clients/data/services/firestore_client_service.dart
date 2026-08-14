@@ -43,4 +43,30 @@ class FirestoreClientService {
   ) {
     return _firestore.collection('clientes').doc(clientId).get();
   }
+
+  Future<void> updateClient({
+    required String clientId,
+    required String nombres,
+    required String apellidos,
+    required String telefono,
+    String? documentoIdentidad,
+  }) async {
+    final data = <String, dynamic>{
+      'nombres': nombres,
+      'apellidos': apellidos,
+      'telefono': telefono,
+      'documentoIdentidad':
+          documentoIdentidad == null || documentoIdentidad.isEmpty
+          ? FieldValue.delete()
+          : documentoIdentidad,
+    };
+
+    await _firestore.collection('clientes').doc(clientId).update(data);
+  }
+
+  Future<void> deactivateClient(String clientId) async {
+    await _firestore.collection('clientes').doc(clientId).update({
+      'activo': false,
+    });
+  }
 }

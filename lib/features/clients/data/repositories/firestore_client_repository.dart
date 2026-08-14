@@ -86,6 +86,55 @@ class FirestoreClientRepository implements ClientRepository {
     }
   }
 
+  @override
+  Future<Client> updateClient({
+    required String clientId,
+    required String nombres,
+    required String apellidos,
+    required String telefono,
+    String? documentoIdentidad,
+  }) async {
+    final cleanNames = nombres.trim();
+    final cleanLastNames = apellidos.trim();
+    final cleanPhone = telefono.trim();
+    final cleanDocument = documentoIdentidad?.trim();
+
+    try {
+      await _clientService.updateClient(
+        clientId: clientId,
+        nombres: cleanNames,
+        apellidos: cleanLastNames,
+        telefono: cleanPhone,
+        documentoIdentidad: cleanDocument?.isEmpty == true
+            ? null
+            : cleanDocument,
+      );
+
+      return await getClientById(clientId);
+    } on ClientException {
+      rethrow;
+    } on FirebaseException {
+      throw const ClientException('No fue posible actualizar al cliente.');
+    } catch (_) {
+      throw const ClientException(
+        'Ocurrió un error inesperado al actualizar al cliente.',
+      );
+    }
+  }
+
+  @override
+  Future<void> deactivateClient(String clientId) async {
+    try {
+      await _clientService.deactivateClient(clientId);
+    } on FirebaseException {
+      throw const ClientException('No fue posible desactivar al cliente.');
+    } catch (_) {
+      throw const ClientException(
+        'Ocurrió un error inesperado al desactivar al cliente.',
+      );
+    }
+  }
+
   Client _clientFromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data();
 

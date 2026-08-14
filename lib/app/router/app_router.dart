@@ -18,6 +18,8 @@ import 'package:oculist/features/clients/presentation/view_models/client_list_vi
 import 'package:oculist/features/clients/presentation/views/client_list_view.dart';
 import 'package:oculist/features/clients/presentation/view_models/client_detail_view_model.dart';
 import 'package:oculist/features/clients/presentation/views/client_detail_view.dart';
+import 'package:oculist/features/clients/presentation/view_models/edit_client_view_model.dart';
+import 'package:oculist/features/clients/presentation/views/edit_client_view.dart';
 
 final class AppRouter {
   const AppRouter._();
@@ -148,6 +150,32 @@ final class AppRouter {
               clientId: clientId,
             ),
             child: const ClientDetailView(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/clientes/:clientId/editar',
+        name: 'editClient',
+        redirect: (context, state) {
+          return _protectRoute(context, requiredRole: UserRole.optico);
+        },
+        builder: (context, state) {
+          final clientRepository = context.read<ClientRepository>();
+
+          final clientId = state.pathParameters['clientId'];
+
+          if (clientId == null || clientId.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Cliente no válido.')),
+            );
+          }
+
+          return ChangeNotifierProvider(
+            create: (_) => EditClientViewModel(
+              clientRepository: clientRepository,
+              clientId: clientId,
+            ),
+            child: const EditClientView(),
           );
         },
       ),

@@ -77,6 +77,28 @@ class FakeClientRepository implements ClientRepository {
       activo: true,
     );
   }
+
+  @override
+  Future<Client> updateClient({
+    required String clientId,
+    required String nombres,
+    required String apellidos,
+    required String telefono,
+    String? documentoIdentidad,
+  }) async {
+    return Client(
+      id: clientId,
+      nombres: nombres,
+      apellidos: apellidos,
+      telefono: telefono,
+      documentoIdentidad: documentoIdentidad,
+      fechaRegistro: DateTime.now(),
+      activo: true,
+    );
+  }
+
+  @override
+  Future<void> deactivateClient(String clientId) async {}
 }
 
 void main() {

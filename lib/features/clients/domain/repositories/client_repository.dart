@@ -11,4 +11,14 @@ abstract interface class ClientRepository {
   Stream<List<Client>> watchActiveClients();
 
   Future<Client> getClientById(String clientId);
+
+  Future<Client> updateClient({
+    required String clientId,
+    required String nombres,
+    required String apellidos,
+    required String telefono,
+    String? documentoIdentidad,
+  });
+
+  Future<void> deactivateClient(String clientId);
 }
