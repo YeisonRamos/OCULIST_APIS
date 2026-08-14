@@ -46,18 +46,39 @@ class OpticianDashboardView extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
+      body: Padding(
+        padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(Icons.visibility_outlined, size: 72),
-            SizedBox(height: 20),
+            const SizedBox(height: 24),
+
+            const Icon(Icons.visibility_outlined, size: 72),
+
+            const SizedBox(height: 16),
+
             Text(
               'Panel del Óptico',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
-            SizedBox(height: 8),
-            Text('Acceso autorizado correctamente.'),
+
+            const SizedBox(height: 8),
+
+            const Text(
+              'Selecciona una opción para continuar.',
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 36),
+
+            FilledButton.icon(
+              onPressed: () {
+                context.push('/clientes/registrar');
+              },
+              icon: const Icon(Icons.person_add_alt_1_outlined),
+              label: const Text('Registrar cliente'),
+            ),
           ],
         ),
       ),

@@ -4,10 +4,17 @@ import 'package:oculist/app/oculist_app.dart';
 import 'package:oculist/features/authentication/domain/models/user_profile.dart';
 import 'package:oculist/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:oculist/features/authentication/domain/repositories/user_repository.dart';
+import 'package:oculist/features/clients/domain/models/client.dart';
+import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
 
 class FakeAuthRepository implements AuthRepository {
   @override
   String? get currentUserId => null;
+
+  @override
+  Stream<String?> authStateChanges() {
+    return Stream.value(null);
+  }
 
   @override
   Future<String> signIn({
@@ -19,10 +26,6 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {}
-  @override
-  Stream<String?> authStateChanges() {
-    return Stream.value(null);
-  }
 }
 
 class FakeUserRepository implements UserRepository {
@@ -38,6 +41,26 @@ class FakeUserRepository implements UserRepository {
   }
 }
 
+class FakeClientRepository implements ClientRepository {
+  @override
+  Future<Client> createClient({
+    required String nombres,
+    required String apellidos,
+    required String telefono,
+    String? documentoIdentidad,
+  }) async {
+    return Client(
+      id: 'test-client-id',
+      nombres: nombres,
+      apellidos: apellidos,
+      telefono: telefono,
+      documentoIdentidad: documentoIdentidad,
+      fechaRegistro: DateTime.now(),
+      activo: true,
+    );
+  }
+}
+
 void main() {
   testWidgets('Muestra correctamente la pantalla de inicio de sesión', (
     WidgetTester tester,
@@ -46,6 +69,7 @@ void main() {
       OculistApp(
         authRepository: FakeAuthRepository(),
         userRepository: FakeUserRepository(),
+        clientRepository: FakeClientRepository(),
       ),
     );
 

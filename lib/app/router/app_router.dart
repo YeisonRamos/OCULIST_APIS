@@ -7,6 +7,9 @@ import 'package:oculist/features/authentication/presentation/view_models/login_v
 import 'package:oculist/features/authentication/presentation/view_models/session_view_model.dart';
 import 'package:oculist/features/authentication/presentation/views/login_view.dart';
 import 'package:oculist/features/authentication/presentation/views/session_view.dart';
+import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/clients/presentation/view_models/register_client_view_model.dart';
+import 'package:oculist/features/clients/presentation/views/register_client_view.dart';
 import 'package:oculist/features/dashboard/presentation/view_models/dashboard_view_model.dart';
 import 'package:oculist/features/dashboard/presentation/views/administrator_dashboard_view.dart';
 import 'package:oculist/features/dashboard/presentation/views/optician_dashboard_view.dart';
@@ -81,6 +84,23 @@ final class AppRouter {
           return ChangeNotifierProvider(
             create: (_) => DashboardViewModel(authRepository: authRepository),
             child: const AdministratorDashboardView(),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: '/clientes/registrar',
+        name: 'registerClient',
+        redirect: (context, state) {
+          return _protectRoute(context, requiredRole: UserRole.optico);
+        },
+        builder: (context, state) {
+          final clientRepository = context.read<ClientRepository>();
+
+          return ChangeNotifierProvider(
+            create: (_) =>
+                RegisterClientViewModel(clientRepository: clientRepository),
+            child: const RegisterClientView(),
           );
         },
       ),
