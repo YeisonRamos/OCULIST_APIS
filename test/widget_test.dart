@@ -64,6 +64,19 @@ class FakeClientRepository implements ClientRepository {
   Stream<List<Client>> watchActiveClients() {
     return Stream.value([]);
   }
+
+  @override
+  Future<Client> getClientById(String clientId) async {
+    return Client(
+      id: clientId,
+      nombres: 'Usuario',
+      apellidos: 'de prueba',
+      telefono: '70000000',
+      documentoIdentidad: '1234567',
+      fechaRegistro: DateTime.now(),
+      activo: true,
+    );
+  }
 }
 
 void main() {

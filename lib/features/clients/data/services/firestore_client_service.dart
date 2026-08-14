@@ -37,4 +37,10 @@ class FirestoreClientService {
         .where('activo', isEqualTo: true)
         .snapshots();
   }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getClientById(
+    String clientId,
+  ) {
+    return _firestore.collection('clientes').doc(clientId).get();
+  }
 }

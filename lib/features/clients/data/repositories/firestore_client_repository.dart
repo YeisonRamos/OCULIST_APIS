@@ -55,27 +55,58 @@ class FirestoreClientRepository implements ClientRepository {
   @override
   Stream<List<Client>> watchActiveClients() {
     return _clientService.watchActiveClients().map((snapshot) {
-      final clients = snapshot.docs.map((document) {
-        final data = document.data();
-
-        final timestamp = data['fechaRegistro'];
-
-        return Client(
-          id: document.id,
-          nombres: data['nombres'] as String? ?? '',
-          apellidos: data['apellidos'] as String? ?? '',
-          telefono: data['telefono'] as String? ?? '',
-          documentoIdentidad: data['documentoIdentidad'] as String?,
-          fechaRegistro: timestamp is Timestamp
-              ? timestamp.toDate()
-              : DateTime.fromMillisecondsSinceEpoch(0),
-          activo: data['activo'] as bool? ?? false,
-        );
-      }).toList();
+      final clients = snapshot.docs.map(_clientFromDocument).toList();
 
       clients.sort((a, b) => b.fechaRegistro.compareTo(a.fechaRegistro));
 
       return clients;
     });
+  }
+
+  @override
+  Future<Client> getClientById(String clientId) async {
+    try {
+      final document = await _clientService.getClientById(clientId);
+
+      if (!document.exists) {
+        throw const ClientException('No se encontró el cliente.');
+      }
+
+      return _clientFromDocument(document);
+    } on ClientException {
+      rethrow;
+    } on FirebaseException {
+      throw const ClientException(
+        'No fue posible obtener la información del cliente.',
+      );
+    } catch (_) {
+      throw const ClientException(
+        'Ocurrió un error inesperado al consultar el cliente.',
+      );
+    }
+  }
+
+  Client _clientFromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data();
+
+    if (data == null) {
+      throw const ClientException(
+        'Los datos del cliente no están disponibles.',
+      );
+    }
+
+    final timestamp = data['fechaRegistro'];
+
+    return Client(
+      id: document.id,
+      nombres: data['nombres'] as String? ?? '',
+      apellidos: data['apellidos'] as String? ?? '',
+      telefono: data['telefono'] as String? ?? '',
+      documentoIdentidad: data['documentoIdentidad'] as String?,
+      fechaRegistro: timestamp is Timestamp
+          ? timestamp.toDate()
+          : DateTime.fromMillisecondsSinceEpoch(0),
+      activo: data['activo'] as bool? ?? false,
+    );
   }
 }

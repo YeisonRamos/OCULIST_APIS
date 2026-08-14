@@ -85,6 +85,9 @@ class _ClientListViewState extends State<ClientListView> {
             title: Text(client.nombreCompleto),
             subtitle: Text(client.telefono),
             trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () {
+              context.push('/clientes/${client.id}');
+            },
           ),
         );
       },

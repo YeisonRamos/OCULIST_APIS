@@ -9,4 +9,6 @@ abstract interface class ClientRepository {
   });
 
   Stream<List<Client>> watchActiveClients();
+
+  Future<Client> getClientById(String clientId);
 }
