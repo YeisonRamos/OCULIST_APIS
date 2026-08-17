@@ -68,7 +68,16 @@ class ClientListViewModel extends ChangeNotifier {
   }
 
   String _normalize(String value) {
-    return value.trim().toLowerCase();
+    return value
+        .trim()
+        .toLowerCase()
+        .replaceAll('á', 'a')
+        .replaceAll('é', 'e')
+        .replaceAll('í', 'i')
+        .replaceAll('ó', 'o')
+        .replaceAll('ú', 'u')
+        .replaceAll('ü', 'u')
+        .replaceAll('ñ', 'n');
   }
 
   @override
