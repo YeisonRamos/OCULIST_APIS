@@ -25,6 +25,8 @@ import 'package:oculist/features/frames/presentation/view_models/register_frame_
 import 'package:oculist/features/frames/presentation/views/register_frame_view.dart';
 import 'package:oculist/features/frames/presentation/view_models/frame_list_view_model.dart';
 import 'package:oculist/features/frames/presentation/views/frame_list_view.dart';
+import 'package:oculist/features/frames/presentation/view_models/frame_detail_view_model.dart';
+import 'package:oculist/features/frames/presentation/views/frame_detail_view.dart';
 
 final class AppRouter {
   const AppRouter._();
@@ -212,6 +214,30 @@ final class AppRouter {
           return ChangeNotifierProvider(
             create: (_) => FrameListViewModel(frameRepository: frameRepository),
             child: const FrameListView(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/monturas/:frameId',
+        name: 'frameDetail',
+        redirect: _protectActiveUserRoute,
+        builder: (context, state) {
+          final frameRepository = context.read<FrameRepository>();
+
+          final frameId = state.pathParameters['frameId'];
+
+          if (frameId == null || frameId.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Montura no válida.')),
+            );
+          }
+
+          return ChangeNotifierProvider(
+            create: (_) => FrameDetailViewModel(
+              frameRepository: frameRepository,
+              frameId: frameId,
+            ),
+            child: const FrameDetailView(),
           );
         },
       ),

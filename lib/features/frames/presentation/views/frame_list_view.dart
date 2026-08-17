@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oculist/features/frames/presentation/view_models/frame_list_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class FrameListView extends StatefulWidget {
   const FrameListView({super.key});
@@ -78,6 +79,9 @@ class _FrameListViewState extends State<FrameListView> {
             title: Text(frame.nombreCompleto),
             subtitle: Text('${frame.codigo} • ${frame.forma} • ${frame.color}'),
             trailing: Text(frame.disponible ? 'Disponible' : 'No disponible'),
+            onTap: () {
+              context.push('/monturas/${frame.id}');
+            },
           ),
         );
       },

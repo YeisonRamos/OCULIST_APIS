@@ -46,4 +46,8 @@ class FirestoreFrameService {
         .where('activo', isEqualTo: true)
         .snapshots();
   }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getFrameById(String frameId) {
+    return _firestore.collection('monturas').doc(frameId).get();
+  }
 }

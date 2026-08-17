@@ -10,6 +10,35 @@ class FirestoreFrameRepository implements FrameRepository {
 
   final FirestoreFrameService _frameService;
 
+  Frame _frameFromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data();
+
+    if (data == null) {
+      throw const FrameException(
+        'Los datos de la montura no están disponibles.',
+      );
+    }
+
+    final timestamp = data['fechaRegistro'];
+
+    return Frame(
+      id: document.id,
+      codigo: data['codigo'] as String? ?? '',
+      marca: data['marca'] as String? ?? '',
+      modelo: data['modelo'] as String? ?? '',
+      color: data['color'] as String? ?? '',
+      forma: data['forma'] as String? ?? '',
+      material: data['material'] as String? ?? '',
+      talla: data['talla'] as String? ?? '',
+      imagenUrl: data['imagenUrl'] as String?,
+      disponible: data['disponible'] as bool? ?? false,
+      activo: data['activo'] as bool? ?? false,
+      fechaRegistro: timestamp is Timestamp
+          ? timestamp.toDate()
+          : DateTime.fromMillisecondsSinceEpoch(0),
+    );
+  }
+
   @override
   Future<Frame> createFrame({
     required String codigo,
@@ -68,31 +97,34 @@ class FirestoreFrameRepository implements FrameRepository {
   @override
   Stream<List<Frame>> watchActiveFrames() {
     return _frameService.watchActiveFrames().map((snapshot) {
-      final frames = snapshot.docs.map((document) {
-        final data = document.data();
-        final timestamp = data['fechaRegistro'];
-
-        return Frame(
-          id: document.id,
-          codigo: data['codigo'] as String? ?? '',
-          marca: data['marca'] as String? ?? '',
-          modelo: data['modelo'] as String? ?? '',
-          color: data['color'] as String? ?? '',
-          forma: data['forma'] as String? ?? '',
-          material: data['material'] as String? ?? '',
-          talla: data['talla'] as String? ?? '',
-          imagenUrl: data['imagenUrl'] as String?,
-          disponible: data['disponible'] as bool? ?? false,
-          activo: data['activo'] as bool? ?? false,
-          fechaRegistro: timestamp is Timestamp
-              ? timestamp.toDate()
-              : DateTime.fromMillisecondsSinceEpoch(0),
-        );
-      }).toList();
+      final frames = snapshot.docs.map(_frameFromDocument).toList();
 
       frames.sort((a, b) => a.codigo.compareTo(b.codigo));
 
       return frames;
     });
+  }
+
+  @override
+  Future<Frame> getFrameById(String frameId) async {
+    try {
+      final document = await _frameService.getFrameById(frameId);
+
+      if (!document.exists) {
+        throw const FrameException('No se encontró la montura.');
+      }
+
+      return _frameFromDocument(document);
+    } on FrameException {
+      rethrow;
+    } on FirebaseException {
+      throw const FrameException(
+        'No fue posible obtener la información de la montura.',
+      );
+    } catch (_) {
+      throw const FrameException(
+        'Ocurrió un error inesperado al consultar la montura.',
+      );
+    }
   }
 }

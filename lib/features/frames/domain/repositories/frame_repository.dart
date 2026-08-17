@@ -13,4 +13,6 @@ abstract interface class FrameRepository {
   });
 
   Stream<List<Frame>> watchActiveFrames();
+
+  Future<Frame> getFrameById(String frameId);
 }
