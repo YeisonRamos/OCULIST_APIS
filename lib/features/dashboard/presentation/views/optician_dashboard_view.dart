@@ -79,6 +79,16 @@ class OpticianDashboardView extends StatelessWidget {
               icon: const Icon(Icons.people_outline_rounded),
               label: const Text('Gestionar clientes'),
             ),
+
+            const SizedBox(height: 12),
+
+            OutlinedButton.icon(
+              onPressed: () {
+                context.push('/monturas');
+              },
+              icon: const Icon(Icons.remove_red_eye_outlined),
+              label: const Text('Consultar monturas'),
+            ),
           ],
         ),
       ),

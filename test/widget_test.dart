@@ -6,6 +6,8 @@ import 'package:oculist/features/authentication/domain/repositories/auth_reposit
 import 'package:oculist/features/authentication/domain/repositories/user_repository.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/frames/domain/models/frame.dart';
+import 'package:oculist/features/frames/domain/repositories/frame_repository.dart';
 
 class FakeAuthRepository implements AuthRepository {
   @override
@@ -101,6 +103,40 @@ class FakeClientRepository implements ClientRepository {
   Future<void> deactivateClient(String clientId) async {}
 }
 
+class FakeFrameRepository implements FrameRepository {
+  @override
+  Future<Frame> createFrame({
+    required String codigo,
+    required String marca,
+    required String modelo,
+    required String color,
+    required String forma,
+    required String material,
+    required String talla,
+    String? imagenUrl,
+  }) async {
+    return Frame(
+      id: 'frame-test-id',
+      codigo: codigo,
+      marca: marca,
+      modelo: modelo,
+      color: color,
+      forma: forma,
+      material: material,
+      talla: talla,
+      imagenUrl: imagenUrl,
+      disponible: true,
+      activo: true,
+      fechaRegistro: DateTime.now(),
+    );
+  }
+
+  @override
+  Stream<List<Frame>> watchActiveFrames() {
+    return Stream.value([]);
+  }
+}
+
 void main() {
   testWidgets('Muestra correctamente la pantalla de inicio de sesión', (
     WidgetTester tester,
@@ -110,6 +146,7 @@ void main() {
         authRepository: FakeAuthRepository(),
         userRepository: FakeUserRepository(),
         clientRepository: FakeClientRepository(),
+        frameRepository: FakeFrameRepository(),
       ),
     );
 

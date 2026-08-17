@@ -8,6 +8,8 @@ import 'package:oculist/features/authentication/data/services/firestore_user_ser
 import 'package:oculist/features/clients/data/repositories/firestore_client_repository.dart';
 import 'package:oculist/features/clients/data/services/firestore_client_service.dart';
 import 'package:oculist/firebase_options.dart';
+import 'package:oculist/features/frames/data/repositories/firestore_frame_repository.dart';
+import 'package:oculist/features/frames/data/services/firestore_frame_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,11 +30,16 @@ Future<void> main() async {
     clientService: clientService,
   );
 
+  final frameService = FirestoreFrameService();
+
+  final frameRepository = FirestoreFrameRepository(frameService: frameService);
+
   runApp(
     OculistApp(
       authRepository: authRepository,
       userRepository: userRepository,
       clientRepository: clientRepository,
+      frameRepository: frameRepository,
     ),
   );
 }

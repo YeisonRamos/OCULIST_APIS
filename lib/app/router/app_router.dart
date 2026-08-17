@@ -20,6 +20,11 @@ import 'package:oculist/features/clients/presentation/view_models/client_detail_
 import 'package:oculist/features/clients/presentation/views/client_detail_view.dart';
 import 'package:oculist/features/clients/presentation/view_models/edit_client_view_model.dart';
 import 'package:oculist/features/clients/presentation/views/edit_client_view.dart';
+import 'package:oculist/features/frames/domain/repositories/frame_repository.dart';
+import 'package:oculist/features/frames/presentation/view_models/register_frame_view_model.dart';
+import 'package:oculist/features/frames/presentation/views/register_frame_view.dart';
+import 'package:oculist/features/frames/presentation/view_models/frame_list_view_model.dart';
+import 'package:oculist/features/frames/presentation/views/frame_list_view.dart';
 
 final class AppRouter {
   const AppRouter._();
@@ -179,6 +184,37 @@ final class AppRouter {
           );
         },
       ),
+
+      GoRoute(
+        path: '/monturas/registrar',
+        name: 'registerFrame',
+        redirect: (context, state) {
+          return _protectRoute(context, requiredRole: UserRole.administrador);
+        },
+        builder: (context, state) {
+          final frameRepository = context.read<FrameRepository>();
+
+          return ChangeNotifierProvider(
+            create: (_) =>
+                RegisterFrameViewModel(frameRepository: frameRepository),
+            child: const RegisterFrameView(),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: '/monturas',
+        name: 'frames',
+        redirect: _protectActiveUserRoute,
+        builder: (context, state) {
+          final frameRepository = context.read<FrameRepository>();
+
+          return ChangeNotifierProvider(
+            create: (_) => FrameListViewModel(frameRepository: frameRepository),
+            child: const FrameListView(),
+          );
+        },
+      ),
     ],
   );
 
@@ -247,6 +283,33 @@ final class AppRouter {
 
       case UserRole.administrador:
         return '/administrador';
+    }
+  }
+
+  static Future<String?> _protectActiveUserRoute(
+    BuildContext context,
+    GoRouterState state,
+  ) async {
+    final authRepository = context.read<AuthRepository>();
+    final userRepository = context.read<UserRepository>();
+
+    final uid = await authRepository.authStateChanges().first;
+
+    if (uid == null) {
+      return '/login';
+    }
+
+    try {
+      final profile = await userRepository.getUserById(uid);
+
+      if (!profile.activo) {
+        await authRepository.signOut();
+        return '/login';
+      }
+
+      return null;
+    } catch (_) {
+      return '/login';
     }
   }
 }
