@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oculist/features/frames/presentation/view_models/frame_detail_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,111 @@ class _FrameDetailViewState extends State<FrameDetailView> {
     });
   }
 
+  Future<void> _editFrame(String frameId) async {
+    final updated = await context.push<bool>('/monturas/$frameId/editar');
+
+    if (!mounted) {
+      return;
+    }
+
+    if (updated == true) {
+      await context.read<FrameDetailViewModel>().loadFrame();
+    }
+  }
+
+  Future<void> _changeAvailability() async {
+    final viewModel = context.read<FrameDetailViewModel>();
+
+    final success = await viewModel.changeAvailability();
+
+    if (!mounted) {
+      return;
+    }
+
+    if (success) {
+      final available = viewModel.frame?.disponible ?? false;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            available
+                ? 'Montura marcada como disponible.'
+                : 'Montura marcada como no disponible.',
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          viewModel.errorMessage ?? 'No fue posible cambiar la disponibilidad.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDeactivate() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Desactivar montura'),
+          content: const Text(
+            '¿Está seguro de que desea desactivar esta montura? '
+            'La información permanecerá almacenada, pero dejará '
+            'de aparecer en el catálogo activo.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Desactivar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    final viewModel = context.read<FrameDetailViewModel>();
+
+    final success = await viewModel.deactivateFrame();
+
+    if (!mounted) {
+      return;
+    }
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Montura desactivada correctamente.')),
+      );
+
+      context.pop();
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          viewModel.errorMessage ?? 'No fue posible desactivar la montura.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<FrameDetailViewModel>();
@@ -34,7 +140,7 @@ class _FrameDetailViewState extends State<FrameDetailView> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (viewModel.errorMessage != null) {
+    if (viewModel.errorMessage != null && viewModel.frame == null) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -71,11 +177,7 @@ class _FrameDetailViewState extends State<FrameDetailView> {
 
           const SizedBox(height: 6),
 
-          Text(
-            frame.codigo,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          Text(frame.codigo, textAlign: TextAlign.center),
 
           const SizedBox(height: 32),
 
@@ -122,7 +224,7 @@ class _FrameDetailViewState extends State<FrameDetailView> {
           ),
 
           _DetailItem(
-            icon: Icons.verified_user_outlined,
+            icon: Icons.verified_outlined,
             title: 'Estado',
             value: frame.activo ? 'Activa' : 'Inactiva',
           ),
@@ -132,6 +234,62 @@ class _FrameDetailViewState extends State<FrameDetailView> {
             title: 'Fecha de registro',
             value: _formatDate(frame.fechaRegistro),
           ),
+
+          if (viewModel.canManage) ...[
+            const SizedBox(height: 32),
+
+            FilledButton.icon(
+              onPressed: () {
+                _editFrame(frame.id);
+              },
+              icon: const Icon(Icons.edit_outlined),
+              label: const Text('Editar montura'),
+            ),
+
+            const SizedBox(height: 12),
+
+            OutlinedButton.icon(
+              onPressed: viewModel.isChangingAvailability
+                  ? null
+                  : _changeAvailability,
+              icon: viewModel.isChangingAvailability
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      frame.disponible
+                          ? Icons.inventory_2_outlined
+                          : Icons.check_circle_outline,
+                    ),
+              label: Text(
+                viewModel.isChangingAvailability
+                    ? 'Actualizando...'
+                    : frame.disponible
+                    ? 'Marcar no disponible'
+                    : 'Marcar disponible',
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            OutlinedButton.icon(
+              onPressed: viewModel.isDeactivating ? null : _confirmDeactivate,
+              icon: viewModel.isDeactivating
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.remove_circle_outline),
+              label: Text(
+                viewModel.isDeactivating
+                    ? 'Desactivando...'
+                    : 'Desactivar montura',
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -139,6 +297,7 @@ class _FrameDetailViewState extends State<FrameDetailView> {
 
   String _formatDate(DateTime date) {
     final day = date.day.toString().padLeft(2, '0');
+
     final month = date.month.toString().padLeft(2, '0');
 
     return '$day/$month/${date.year}';

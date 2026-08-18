@@ -27,6 +27,8 @@ import 'package:oculist/features/frames/presentation/view_models/frame_list_view
 import 'package:oculist/features/frames/presentation/views/frame_list_view.dart';
 import 'package:oculist/features/frames/presentation/view_models/frame_detail_view_model.dart';
 import 'package:oculist/features/frames/presentation/views/frame_detail_view.dart';
+import 'package:oculist/features/frames/presentation/view_models/edit_frame_view_model.dart';
+import 'package:oculist/features/frames/presentation/views/edit_frame_view.dart';
 
 final class AppRouter {
   const AppRouter._();
@@ -224,6 +226,10 @@ final class AppRouter {
         builder: (context, state) {
           final frameRepository = context.read<FrameRepository>();
 
+          final authRepository = context.read<AuthRepository>();
+
+          final userRepository = context.read<UserRepository>();
+
           final frameId = state.pathParameters['frameId'];
 
           if (frameId == null || frameId.isEmpty) {
@@ -235,9 +241,37 @@ final class AppRouter {
           return ChangeNotifierProvider(
             create: (_) => FrameDetailViewModel(
               frameRepository: frameRepository,
+              authRepository: authRepository,
+              userRepository: userRepository,
               frameId: frameId,
             ),
             child: const FrameDetailView(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/monturas/:frameId/editar',
+        name: 'editFrame',
+        redirect: (context, state) {
+          return _protectRoute(context, requiredRole: UserRole.administrador);
+        },
+        builder: (context, state) {
+          final frameRepository = context.read<FrameRepository>();
+
+          final frameId = state.pathParameters['frameId'];
+
+          if (frameId == null || frameId.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Montura no válida.')),
+            );
+          }
+
+          return ChangeNotifierProvider(
+            create: (_) => EditFrameViewModel(
+              frameRepository: frameRepository,
+              frameId: frameId,
+            ),
+            child: const EditFrameView(),
           );
         },
       ),

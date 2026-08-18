@@ -152,6 +152,41 @@ class FakeFrameRepository implements FrameRepository {
       fechaRegistro: DateTime.now(),
     );
   }
+
+  @override
+  Future<Frame> updateFrame({
+    required String frameId,
+    required String codigo,
+    required String marca,
+    required String modelo,
+    required String color,
+    required String forma,
+    required String material,
+    required String talla,
+  }) async {
+    return Frame(
+      id: frameId,
+      codigo: codigo,
+      marca: marca,
+      modelo: modelo,
+      color: color,
+      forma: forma,
+      material: material,
+      talla: talla,
+      disponible: true,
+      activo: true,
+      fechaRegistro: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<void> setAvailability({
+    required String frameId,
+    required bool disponible,
+  }) async {}
+
+  @override
+  Future<void> deactivateFrame(String frameId) async {}
 }
 
 void main() {

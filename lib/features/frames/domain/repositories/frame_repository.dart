@@ -15,4 +15,22 @@ abstract interface class FrameRepository {
   Stream<List<Frame>> watchActiveFrames();
 
   Future<Frame> getFrameById(String frameId);
+
+  Future<Frame> updateFrame({
+    required String frameId,
+    required String codigo,
+    required String marca,
+    required String modelo,
+    required String color,
+    required String forma,
+    required String material,
+    required String talla,
+  });
+
+  Future<void> setAvailability({
+    required String frameId,
+    required bool disponible,
+  });
+
+  Future<void> deactivateFrame(String frameId);
 }

@@ -10,6 +10,83 @@ class FirestoreFrameRepository implements FrameRepository {
 
   final FirestoreFrameService _frameService;
 
+  @override
+  Future<Frame> updateFrame({
+    required String frameId,
+    required String codigo,
+    required String marca,
+    required String modelo,
+    required String color,
+    required String forma,
+    required String material,
+    required String talla,
+  }) async {
+    final cleanCode = codigo.trim();
+    final cleanBrand = marca.trim();
+    final cleanModel = modelo.trim();
+    final cleanColor = color.trim();
+    final cleanShape = forma.trim();
+    final cleanMaterial = material.trim();
+    final cleanSize = talla.trim();
+
+    try {
+      await _frameService.updateFrame(
+        frameId: frameId,
+        codigo: cleanCode,
+        marca: cleanBrand,
+        modelo: cleanModel,
+        color: cleanColor,
+        forma: cleanShape,
+        material: cleanMaterial,
+        talla: cleanSize,
+      );
+
+      return await getFrameById(frameId);
+    } on FrameException {
+      rethrow;
+    } on FirebaseException {
+      throw const FrameException('No fue posible actualizar la montura.');
+    } catch (_) {
+      throw const FrameException(
+        'Ocurrió un error inesperado al actualizar la montura.',
+      );
+    }
+  }
+
+  @override
+  Future<void> setAvailability({
+    required String frameId,
+    required bool disponible,
+  }) async {
+    try {
+      await _frameService.setAvailability(
+        frameId: frameId,
+        disponible: disponible,
+      );
+    } on FirebaseException {
+      throw const FrameException(
+        'No fue posible cambiar la disponibilidad de la montura.',
+      );
+    } catch (_) {
+      throw const FrameException(
+        'Ocurrió un error inesperado al cambiar la disponibilidad.',
+      );
+    }
+  }
+
+  @override
+  Future<void> deactivateFrame(String frameId) async {
+    try {
+      await _frameService.deactivateFrame(frameId);
+    } on FirebaseException {
+      throw const FrameException('No fue posible desactivar la montura.');
+    } catch (_) {
+      throw const FrameException(
+        'Ocurrió un error inesperado al desactivar la montura.',
+      );
+    }
+  }
+
   Frame _frameFromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data();
 

@@ -50,4 +50,40 @@ class FirestoreFrameService {
   Future<DocumentSnapshot<Map<String, dynamic>>> getFrameById(String frameId) {
     return _firestore.collection('monturas').doc(frameId).get();
   }
+
+  Future<void> updateFrame({
+    required String frameId,
+    required String codigo,
+    required String marca,
+    required String modelo,
+    required String color,
+    required String forma,
+    required String material,
+    required String talla,
+  }) async {
+    await _firestore.collection('monturas').doc(frameId).update({
+      'codigo': codigo,
+      'marca': marca,
+      'modelo': modelo,
+      'color': color,
+      'forma': forma,
+      'material': material,
+      'talla': talla,
+    });
+  }
+
+  Future<void> setAvailability({
+    required String frameId,
+    required bool disponible,
+  }) async {
+    await _firestore.collection('monturas').doc(frameId).update({
+      'disponible': disponible,
+    });
+  }
+
+  Future<void> deactivateFrame(String frameId) async {
+    await _firestore.collection('monturas').doc(frameId).update({
+      'activo': false,
+    });
+  }
 }
