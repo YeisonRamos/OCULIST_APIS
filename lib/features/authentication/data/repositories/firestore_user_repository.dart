@@ -21,12 +21,12 @@ class FirestoreUserRepository implements UserRepository {
         );
       }
 
-      final nombre = data['nombre'];
+      final nombre = _resolveFullName(data);
       final correo = data['correo'];
       final rol = data['rol'];
       final activo = data['activo'];
 
-      if (nombre is! String ||
+      if (nombre.isEmpty ||
           correo is! String ||
           rol is! String ||
           activo is! bool) {
@@ -51,14 +51,33 @@ class FirestoreUserRepository implements UserRepository {
     }
   }
 
+  String _resolveFullName(Map<String, dynamic> data) {
+    final fullName = data['nombreCompleto'];
+    if (fullName is String && fullName.trim().isNotEmpty) {
+      return fullName.trim();
+    }
+
+    final names = data['nombres'];
+    final lastNames = data['apellidos'];
+    final combinedName = [
+      if (names is String) names.trim(),
+      if (lastNames is String) lastNames.trim(),
+    ].where((part) => part.isNotEmpty).join(' ');
+
+    if (combinedName.isNotEmpty) {
+      return combinedName;
+    }
+
+    final legacyName = data['nombre'];
+    return legacyName is String ? legacyName.trim() : '';
+  }
+
   UserRole _parseRole(String role) {
     switch (role) {
       case 'optico':
         return UserRole.optico;
-
       case 'administrador':
         return UserRole.administrador;
-
       default:
         throw const UserProfileException('El usuario tiene un rol no válido.');
     }

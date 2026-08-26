@@ -79,9 +79,13 @@ final class AppRouter {
         },
         builder: (context, state) {
           final authRepository = context.read<AuthRepository>();
+          final userRepository = context.read<UserRepository>();
 
           return ChangeNotifierProvider(
-            create: (_) => DashboardViewModel(authRepository: authRepository),
+            create: (_) => DashboardViewModel(
+              authRepository: authRepository,
+              userRepository: userRepository,
+            ),
             child: const OpticianDashboardView(),
           );
         },
@@ -90,7 +94,7 @@ final class AppRouter {
         path: '/clientes',
         name: 'clients',
         redirect: (context, state) {
-          return _protectRoute(context, requiredRole: UserRole.optico);
+          return _protectActiveUserRoute(context, state);
         },
         builder: (context, state) {
           final clientRepository = context.read<ClientRepository>();
@@ -111,9 +115,13 @@ final class AppRouter {
         },
         builder: (context, state) {
           final authRepository = context.read<AuthRepository>();
+          final userRepository = context.read<UserRepository>();
 
           return ChangeNotifierProvider(
-            create: (_) => DashboardViewModel(authRepository: authRepository),
+            create: (_) => DashboardViewModel(
+              authRepository: authRepository,
+              userRepository: userRepository,
+            ),
             child: const AdministratorDashboardView(),
           );
         },
@@ -123,7 +131,7 @@ final class AppRouter {
         path: '/clientes/registrar',
         name: 'registerClient',
         redirect: (context, state) {
-          return _protectRoute(context, requiredRole: UserRole.optico);
+          return _protectActiveUserRoute(context, state);
         },
         builder: (context, state) {
           final clientRepository = context.read<ClientRepository>();
@@ -140,7 +148,7 @@ final class AppRouter {
         path: '/clientes/:clientId',
         name: 'clientDetail',
         redirect: (context, state) {
-          return _protectRoute(context, requiredRole: UserRole.optico);
+          return _protectActiveUserRoute(context, state);
         },
         builder: (context, state) {
           final clientRepository = context.read<ClientRepository>();
@@ -166,7 +174,7 @@ final class AppRouter {
         path: '/clientes/:clientId/editar',
         name: 'editClient',
         redirect: (context, state) {
-          return _protectRoute(context, requiredRole: UserRole.optico);
+          return _protectActiveUserRoute(context, state);
         },
         builder: (context, state) {
           final clientRepository = context.read<ClientRepository>();

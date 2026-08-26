@@ -225,7 +225,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Bienvenido a OCULIST'), findsOneWidget);
+    expect(find.text('Oculist'), findsOneWidget);
 
     expect(find.byKey(const Key('email_field')), findsOneWidget);
 
