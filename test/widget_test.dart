@@ -187,6 +187,27 @@ class FakeFrameRepository implements FrameRepository {
 
   @override
   Future<void> deactivateFrame(String frameId) async {}
+
+  @override
+  Future<Frame> updateFrameImage({
+    required String frameId,
+    required String filePath,
+  }) async {
+    return Frame(
+      id: frameId,
+      codigo: 'M001',
+      marca: 'Marca de prueba',
+      modelo: 'Modelo de prueba',
+      color: 'Negro',
+      forma: 'Rectangular',
+      material: 'Acetato',
+      talla: 'Mediana',
+      imagenUrl: 'https://example.com/montura.jpg',
+      disponible: true,
+      activo: true,
+      fechaRegistro: DateTime.now(),
+    );
+  }
 }
 
 void main() {

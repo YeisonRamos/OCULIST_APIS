@@ -10,6 +10,7 @@ import 'package:oculist/features/clients/data/services/firestore_client_service.
 import 'package:oculist/firebase_options.dart';
 import 'package:oculist/features/frames/data/repositories/firestore_frame_repository.dart';
 import 'package:oculist/features/frames/data/services/firestore_frame_service.dart';
+import 'package:oculist/features/frames/data/services/frame_storage_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +33,12 @@ Future<void> main() async {
 
   final frameService = FirestoreFrameService();
 
-  final frameRepository = FirestoreFrameRepository(frameService: frameService);
+  final frameStorageService = FrameStorageService();
 
+  final frameRepository = FirestoreFrameRepository(
+    frameService: frameService,
+    storageService: frameStorageService,
+  );
   runApp(
     OculistApp(
       authRepository: authRepository,

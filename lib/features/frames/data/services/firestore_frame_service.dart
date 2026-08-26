@@ -86,4 +86,13 @@ class FirestoreFrameService {
       'activo': false,
     });
   }
+
+  Future<void> updateImageUrl({
+    required String frameId,
+    required String imageUrl,
+  }) async {
+    await _firestore.collection('monturas').doc(frameId).update({
+      'imagenUrl': imageUrl,
+    });
+  }
 }

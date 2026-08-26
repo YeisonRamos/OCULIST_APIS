@@ -17,6 +17,9 @@ class RegisterFrameViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   Frame? get createdFrame => _createdFrame;
 
+  String? _warningMessage;
+  String? get warningMessage => _warningMessage;
+
   String? validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {
       return 'Ingresa $fieldName';
@@ -33,17 +36,19 @@ class RegisterFrameViewModel extends ChangeNotifier {
     required String forma,
     required String material,
     required String talla,
+    String? imagePath,
   }) async {
     if (_isSaving) {
       return false;
     }
 
+    _isSaving = true;
     _errorMessage = null;
-    _createdFrame = null;
-    _setSaving(true);
+    _warningMessage = null;
+    notifyListeners();
 
     try {
-      _createdFrame = await _frameRepository.createFrame(
+      var frame = await _frameRepository.createFrame(
         codigo: codigo,
         marca: marca,
         modelo: modelo,
@@ -53,6 +58,23 @@ class RegisterFrameViewModel extends ChangeNotifier {
         talla: talla,
       );
 
+      _createdFrame = frame;
+
+      if (imagePath != null && imagePath.isNotEmpty) {
+        try {
+          frame = await _frameRepository.updateFrameImage(
+            frameId: frame.id,
+            filePath: imagePath,
+          );
+
+          _createdFrame = frame;
+        } on FrameException catch (error) {
+          _warningMessage =
+              'La montura fue registrada, pero la fotografía no pudo guardarse: '
+              '${error.message}';
+        }
+      }
+
       return true;
     } on FrameException catch (error) {
       _errorMessage = error.message;
@@ -61,16 +83,8 @@ class RegisterFrameViewModel extends ChangeNotifier {
       _errorMessage = 'Ocurrió un error inesperado al registrar la montura.';
       return false;
     } finally {
-      _setSaving(false);
+      _isSaving = false;
+      notifyListeners();
     }
-  }
-
-  void _setSaving(bool value) {
-    if (_isSaving == value) {
-      return;
-    }
-
-    _isSaving = value;
-    notifyListeners();
   }
 }

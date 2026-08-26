@@ -33,4 +33,9 @@ abstract interface class FrameRepository {
   });
 
   Future<void> deactivateFrame(String frameId);
+
+  Future<Frame> updateFrameImage({
+    required String frameId,
+    required String filePath,
+  });
 }

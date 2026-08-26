@@ -3,12 +3,17 @@ import 'package:oculist/features/frames/data/services/firestore_frame_service.da
 import 'package:oculist/features/frames/domain/exceptions/frame_exception.dart';
 import 'package:oculist/features/frames/domain/models/frame.dart';
 import 'package:oculist/features/frames/domain/repositories/frame_repository.dart';
+import 'package:oculist/features/frames/data/services/frame_storage_service.dart';
 
 class FirestoreFrameRepository implements FrameRepository {
-  FirestoreFrameRepository({required FirestoreFrameService frameService})
-    : _frameService = frameService;
+  FirestoreFrameRepository({
+    required FirestoreFrameService frameService,
+    required FrameStorageService storageService,
+  }) : _frameService = frameService,
+       _storageService = storageService;
 
   final FirestoreFrameService _frameService;
+  final FrameStorageService _storageService;
 
   @override
   Future<Frame> updateFrame({
@@ -83,6 +88,33 @@ class FirestoreFrameRepository implements FrameRepository {
     } catch (_) {
       throw const FrameException(
         'Ocurrió un error inesperado al desactivar la montura.',
+      );
+    }
+  }
+
+  @override
+  Future<Frame> updateFrameImage({
+    required String frameId,
+    required String filePath,
+  }) async {
+    try {
+      final imageUrl = await _storageService.uploadFrameImage(
+        frameId: frameId,
+        filePath: filePath,
+      );
+
+      await _frameService.updateImageUrl(frameId: frameId, imageUrl: imageUrl);
+
+      return await getFrameById(frameId);
+    } on FirebaseException {
+      throw const FrameException(
+        'No fue posible subir la imagen de la montura.',
+      );
+    } on UnsupportedError {
+      throw const FrameException('El formato de la imagen no es compatible.');
+    } catch (_) {
+      throw const FrameException(
+        'Ocurrió un error al guardar la imagen de la montura.',
       );
     }
   }

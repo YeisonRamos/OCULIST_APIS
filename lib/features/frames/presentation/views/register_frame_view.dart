@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:oculist/features/frames/presentation/view_models/register_frame_view_model.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterFrameView extends StatefulWidget {
   const RegisterFrameView({super.key});
@@ -19,6 +21,8 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
   final _shapeController = TextEditingController();
   final _materialController = TextEditingController();
   final _sizeController = TextEditingController();
+  final ImagePicker _imagePicker = ImagePicker();
+  XFile? _selectedImage;
 
   @override
   void dispose() {
@@ -49,6 +53,7 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
       forma: _shapeController.text,
       material: _materialController.text,
       talla: _sizeController.text,
+      imagePath: _selectedImage?.path,
     );
 
     if (!mounted) {
@@ -80,6 +85,23 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
         ),
       ),
     );
+  }
+
+  Future<void> _selectImage() async {
+    final image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1600,
+      maxHeight: 1600,
+      imageQuality: 75,
+    );
+
+    if (!mounted || image == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedImage = image;
+    });
   }
 
   @override
@@ -166,7 +188,51 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
                   fieldName: 'la talla',
                 ),
 
+                const SizedBox(height: 8),
+
+                if (_selectedImage != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.file(
+                      File(_selectedImage!.path),
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                else
+                  Container(
+                    height: 160,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                    ),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add_photo_alternate_outlined, size: 42),
+                        SizedBox(height: 8),
+                        Text('Sin fotografía seleccionada'),
+                      ],
+                    ),
+                  ),
+
                 const SizedBox(height: 12),
+
+                OutlinedButton.icon(
+                  onPressed: viewModel.isSaving ? null : _selectImage,
+                  icon: const Icon(Icons.photo_library_outlined),
+                  label: Text(
+                    _selectedImage == null
+                        ? 'Seleccionar fotografía'
+                        : 'Cambiar fotografía',
+                  ),
+                ),
+
+                const SizedBox(height: 20),
 
                 FilledButton.icon(
                   key: const Key('register_frame_button'),

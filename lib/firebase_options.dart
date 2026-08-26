@@ -57,7 +57,6 @@ class DefaultFirebaseOptions {
     projectId: 'oculist-sistema-inteligente',
     storageBucket: 'oculist-sistema-inteligente.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDBUcus5WycCWoMWaIdQgYB9W7HnHgi8n0',
     appId: '1:638752494916:ios:362c9c1c16bb65b6917311',
@@ -66,7 +65,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'oculist-sistema-inteligente.firebasestorage.app',
     iosBundleId: 'com.example.oculist',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDBUcus5WycCWoMWaIdQgYB9W7HnHgi8n0',
     appId: '1:638752494916:ios:362c9c1c16bb65b6917311',
