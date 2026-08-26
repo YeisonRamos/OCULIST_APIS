@@ -162,10 +162,7 @@ class _FrameDetailViewState extends State<FrameDetailView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const CircleAvatar(
-            radius: 42,
-            child: Icon(Icons.remove_red_eye_outlined, size: 44),
-          ),
+          _FrameImage(imageUrl: frame.imagenUrl),
 
           const SizedBox(height: 20),
 
@@ -322,6 +319,74 @@ class _DetailItem extends StatelessWidget {
         leading: Icon(icon),
         title: Text(title),
         subtitle: Text(value),
+      ),
+    );
+  }
+}
+
+class _FrameImage extends StatelessWidget {
+  const _FrameImage({required this.imageUrl});
+
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = imageUrl?.trim();
+
+    if (url == null || url.isEmpty) {
+      return const _FrameImagePlaceholder();
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+
+            final expectedBytes = loadingProgress.expectedTotalBytes;
+            final progress = expectedBytes == null
+                ? null
+                : loadingProgress.cumulativeBytesLoaded / expectedBytes;
+
+            return Center(child: CircularProgressIndicator(value: progress));
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return const _FrameImagePlaceholder(
+              message: 'No se pudo cargar la fotografía',
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _FrameImagePlaceholder extends StatelessWidget {
+  const _FrameImagePlaceholder({this.message = 'Sin fotografía'});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 210,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.image_not_supported_outlined, size: 48),
+          const SizedBox(height: 8),
+          Text(message),
+        ],
       ),
     );
   }
