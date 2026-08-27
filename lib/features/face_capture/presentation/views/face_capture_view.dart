@@ -155,6 +155,15 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(_messageForCameraError(error))));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'No fue posible analizar la fotografía. Inténtelo nuevamente.',
+          ),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
