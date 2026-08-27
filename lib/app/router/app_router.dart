@@ -30,6 +30,8 @@ import 'package:oculist/features/frames/presentation/view_models/frame_detail_vi
 import 'package:oculist/features/frames/presentation/views/frame_detail_view.dart';
 import 'package:oculist/features/frames/presentation/view_models/edit_frame_view_model.dart';
 import 'package:oculist/features/frames/presentation/views/edit_frame_view.dart';
+import 'package:oculist/features/virtual_try_on/presentation/view_models/try_on_selection_view_model.dart';
+import 'package:oculist/features/virtual_try_on/presentation/views/try_on_selection_view.dart';
 
 final class AppRouter {
   const AppRouter._();
@@ -177,6 +179,28 @@ final class AppRouter {
         redirect: _protectActiveUserRoute,
         builder: (context, state) {
           return const FaceCaptureView();
+        },
+      ),
+      GoRoute(
+        path: '/clientes/:clientId/probar-monturas',
+        name: 'tryOnSelection',
+        redirect: _protectActiveUserRoute,
+        builder: (context, state) {
+          final clientId = state.pathParameters['clientId'];
+          if (clientId == null || clientId.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Cliente no válido.')),
+            );
+          }
+
+          return ChangeNotifierProvider(
+            create: (_) => TryOnSelectionViewModel(
+              clientRepository: context.read<ClientRepository>(),
+              frameRepository: context.read<FrameRepository>(),
+              clientId: clientId,
+            ),
+            child: const TryOnSelectionView(),
+          );
         },
       ),
       GoRoute(

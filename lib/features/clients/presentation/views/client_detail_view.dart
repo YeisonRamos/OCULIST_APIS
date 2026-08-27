@@ -220,6 +220,19 @@ class _ClientDetailViewState extends State<ClientDetailView> {
             ),
           ),
           const SizedBox(height: 12),
+          FilledButton.tonalIcon(
+            onPressed:
+                viewModel.isSavingPhoto || photoUrl == null || photoUrl.isEmpty
+                ? null
+                : () => context.push('/clientes/${client.id}/probar-monturas'),
+            icon: const Icon(Icons.auto_awesome_rounded),
+            label: Text(
+              photoUrl == null || photoUrl.isEmpty
+                  ? 'Capture una foto para probar monturas'
+                  : 'Probar monturas',
+            ),
+          ),
+          const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: viewModel.isSavingPhoto
                 ? null
