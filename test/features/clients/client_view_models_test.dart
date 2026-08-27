@@ -80,6 +80,14 @@ class FakeClientRepository implements ClientRepository {
   }
 
   @override
+  Future<String> saveFacePhoto({
+    required String clientId,
+    required String filePath,
+  }) async {
+    return 'https://example.com/client-face.jpg';
+  }
+
+  @override
   Future<void> deactivateClient(String clientId) async {
     deactivatedClientId = clientId;
   }

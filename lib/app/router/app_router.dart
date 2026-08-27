@@ -20,6 +20,7 @@ import 'package:oculist/features/clients/presentation/view_models/client_detail_
 import 'package:oculist/features/clients/presentation/views/client_detail_view.dart';
 import 'package:oculist/features/clients/presentation/view_models/edit_client_view_model.dart';
 import 'package:oculist/features/clients/presentation/views/edit_client_view.dart';
+import 'package:oculist/features/face_capture/presentation/views/face_capture_view.dart';
 import 'package:oculist/features/frames/domain/repositories/frame_repository.dart';
 import 'package:oculist/features/frames/presentation/view_models/register_frame_view_model.dart';
 import 'package:oculist/features/frames/presentation/views/register_frame_view.dart';
@@ -168,6 +169,14 @@ final class AppRouter {
             ),
             child: const ClientDetailView(),
           );
+        },
+      ),
+      GoRoute(
+        path: '/clientes/:clientId/captura-facial',
+        name: 'faceCapture',
+        redirect: _protectActiveUserRoute,
+        builder: (context, state) {
+          return const FaceCaptureView();
         },
       ),
       GoRoute(

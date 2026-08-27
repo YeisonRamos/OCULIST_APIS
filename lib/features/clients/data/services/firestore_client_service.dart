@@ -64,6 +64,15 @@ class FirestoreClientService {
     await _firestore.collection('clientes').doc(clientId).update(data);
   }
 
+  Future<void> updateFacePhotoUrl({
+    required String clientId,
+    required String photoUrl,
+  }) async {
+    await _firestore.collection('clientes').doc(clientId).update({
+      'fotoFacialUrl': photoUrl,
+    });
+  }
+
   Future<void> deactivateClient(String clientId) async {
     await _firestore.collection('clientes').doc(clientId).update({
       'activo': false,

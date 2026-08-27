@@ -1,1 +1,31 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"oculist-sistema-inteligente","appId":"1:638752494916:android:72fabc5db98d4d7f917311","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"oculist-sistema-inteligente","configurations":{"android":"1:638752494916:android:72fabc5db98d4d7f917311","ios":"1:638752494916:ios:362c9c1c16bb65b6917311","macos":"1:638752494916:ios:362c9c1c16bb65b6917311","web":"1:638752494916:web:8bd277aa851c210d917311","windows":"1:638752494916:web:cf882682ec9724a2917311"}}}}}}
+{
+    "flutter":  {
+                    "platforms":  {
+                                      "android":  {
+                                                      "default":  {
+                                                                      "projectId":  "oculist-sistema-inteligente",
+                                                                      "appId":  "1:638752494916:android:72fabc5db98d4d7f917311",
+                                                                      "fileOutput":  "android/app/google-services.json"
+                                                                  }
+                                                  },
+                                      "dart":  {
+                                                   "lib/firebase_options.dart":  {
+                                                                                     "projectId":  "oculist-sistema-inteligente",
+                                                                                     "configurations":  {
+                                                                                                            "android":  "1:638752494916:android:72fabc5db98d4d7f917311",
+                                                                                                            "ios":  "1:638752494916:ios:362c9c1c16bb65b6917311",
+                                                                                                            "macos":  "1:638752494916:ios:362c9c1c16bb65b6917311",
+                                                                                                            "web":  "1:638752494916:web:8bd277aa851c210d917311",
+                                                                                                            "windows":  "1:638752494916:web:cf882682ec9724a2917311"
+                                                                                                        }
+                                                                                 }
+                                               }
+                                  }
+                },
+    "firestore":  {
+                      "rules":  "firestore.rules"
+                  },
+    "storage":  {
+                    "rules":  "storage.rules"
+                }
+}

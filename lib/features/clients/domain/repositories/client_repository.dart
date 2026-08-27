@@ -20,5 +20,10 @@ abstract interface class ClientRepository {
     String? documentoIdentidad,
   });
 
+  Future<String> saveFacePhoto({
+    required String clientId,
+    required String filePath,
+  });
+
   Future<void> deactivateClient(String clientId);
 }

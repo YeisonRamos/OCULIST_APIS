@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    function usuarioActual() {
+      return firestore.get(
+        /databases/(default)/documents/usuarios/$(request.auth.uid)
+      ).data;
+    }
+
+    function esUsuarioActivo() {
+      return estaAutenticado()
+          && usuarioActual().activo == true
+          && (
+            usuarioActual().rol == 'optico'
+            || usuarioActual().rol == 'administrador'
+          );
+    }
+
+    match /clientes/{clienteId}/rostro.jpg {
+      allow read: if esUsuarioActivo();
+
+      allow write: if esUsuarioActivo()
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType == 'image/jpeg';
+    }
+
+    match /monturas/{monturaId}/{archivo} {
+      allow read: if esUsuarioActivo();
+
+      allow write: if esUsuarioActivo()
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

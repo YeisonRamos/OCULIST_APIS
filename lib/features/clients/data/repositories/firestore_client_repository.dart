@@ -1,14 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oculist/features/clients/data/services/client_photo_storage_service.dart';
 import 'package:oculist/features/clients/data/services/firestore_client_service.dart';
 import 'package:oculist/features/clients/domain/exceptions/client_exception.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
 
 class FirestoreClientRepository implements ClientRepository {
-  FirestoreClientRepository({required FirestoreClientService clientService})
-    : _clientService = clientService;
+  FirestoreClientRepository({
+    required FirestoreClientService clientService,
+    required ClientPhotoStorageService photoStorageService,
+  }) : _clientService = clientService,
+       _photoStorageService = photoStorageService;
 
   final FirestoreClientService _clientService;
+  final ClientPhotoStorageService _photoStorageService;
 
   @override
   Future<Client> createClient({
@@ -123,6 +128,41 @@ class FirestoreClientRepository implements ClientRepository {
   }
 
   @override
+  Future<String> saveFacePhoto({
+    required String clientId,
+    required String filePath,
+  }) async {
+    try {
+      final photoUrl = await _photoStorageService.uploadFacePhoto(
+        clientId: clientId,
+        filePath: filePath,
+      );
+      await _clientService.updateFacePhotoUrl(
+        clientId: clientId,
+        photoUrl: photoUrl,
+      );
+      return photoUrl;
+    } on FirebaseException catch (error) {
+      if (error.code == 'unauthorized' ||
+          error.code == 'permission-denied' ||
+          error.code == 'object-not-found') {
+        throw const ClientException(
+          'Firebase Storage no está habilitado o no tienes permiso para guardar la fotografía.',
+        );
+      }
+      throw const ClientException(
+        'No fue posible guardar la fotografía facial.',
+      );
+    } on StateError catch (error) {
+      throw ClientException(error.message);
+    } catch (_) {
+      throw const ClientException(
+        'Ocurrió un error inesperado al guardar la fotografía.',
+      );
+    }
+  }
+
+  @override
   Future<void> deactivateClient(String clientId) async {
     try {
       await _clientService.deactivateClient(clientId);
@@ -152,6 +192,7 @@ class FirestoreClientRepository implements ClientRepository {
       apellidos: data['apellidos'] as String? ?? '',
       telefono: data['telefono'] as String? ?? '',
       documentoIdentidad: data['documentoIdentidad'] as String?,
+      fotoFacialUrl: data['fotoFacialUrl'] as String?,
       fechaRegistro: timestamp is Timestamp
           ? timestamp.toDate()
           : DateTime.fromMillisecondsSinceEpoch(0),

@@ -1,0 +1,211 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    function usuarioActual() {
+      return get(
+        /databases/$(database)/documents/usuarios/$(request.auth.uid)
+      ).data;
+    }
+
+    function esOpticoActivo() {
+      return estaAutenticado()
+          && usuarioActual().activo == true
+          && usuarioActual().rol == 'optico';
+    }
+    
+    function esAdministradorActivo() {
+      return estaAutenticado()
+          && usuarioActual().activo == true
+          && usuarioActual().rol == 'administrador';
+    }
+
+    match /usuarios/{uid} {
+      allow read: if estaAutenticado()
+                  && request.auth.uid == uid;
+
+      allow write: if false;
+    }
+
+    match /clientes/{clienteId} {
+
+  allow read: if esOpticoActivo()
+              || esAdministradorActivo();
+
+  allow create: if (esOpticoActivo()
+                    || esAdministradorActivo())
+                && request.resource.data.keys().hasAll([
+                  'nombres',
+                  'apellidos',
+                  'telefono',
+                  'fechaRegistro',
+                  'activo'
+                ])
+                && request.resource.data.keys().hasOnly([
+                  'nombres',
+                  'apellidos',
+                  'telefono',
+                  'documentoIdentidad',
+                  'fotoFacialUrl',
+                  'fechaRegistro',
+                  'activo'
+                ])
+                && request.resource.data.nombres is string
+                && request.resource.data.apellidos is string
+                && request.resource.data.telefono is string
+                && request.resource.data.fechaRegistro == request.time
+                && request.resource.data.activo == true
+                && (
+                  !request.resource.data.keys().hasAny([
+                    'documentoIdentidad'
+                  ])
+                  || request.resource.data.documentoIdentidad is string
+                )
+                && (
+                  !request.resource.data.keys().hasAny(['fotoFacialUrl'])
+                  || request.resource.data.fotoFacialUrl is string
+                );
+
+  allow update: if (esOpticoActivo()
+                    || esAdministradorActivo())
+                && (
+                  (
+                    request.resource.data
+                      .diff(resource.data)
+                      .affectedKeys()
+                      .hasOnly([
+                        'nombres',
+                        'apellidos',
+                        'telefono',
+                        'documentoIdentidad',
+                        'fotoFacialUrl'
+                      ])
+                    && request.resource.data.nombres is string
+                    && request.resource.data.apellidos is string
+                    && request.resource.data.telefono is string
+                    && (
+                      !request.resource.data.keys().hasAny([
+                        'documentoIdentidad'
+                      ])
+                      || request.resource.data.documentoIdentidad is string
+                    )
+                    && (
+                      !request.resource.data.keys().hasAny(['fotoFacialUrl'])
+                      || request.resource.data.fotoFacialUrl is string
+                    )
+                  )
+                  ||
+                  (
+                    request.resource.data
+                      .diff(resource.data)
+                      .affectedKeys()
+                      .hasOnly(['activo'])
+                    && resource.data.activo == true
+                    && request.resource.data.activo == false
+                  )
+                );
+
+  			allow delete: if false;
+		}
+    
+    match /monturas/{monturaId} {
+
+      allow read: if esOpticoActivo()
+                  || esAdministradorActivo();
+
+      allow create: if esAdministradorActivo()
+                    && request.resource.data.keys().hasAll([
+                      'codigo',
+                      'marca',
+                      'modelo',
+                      'color',
+                      'forma',
+                      'material',
+                      'talla',
+                      'disponible',
+                      'activo',
+                      'fechaRegistro'
+                    ])
+                    && request.resource.data.keys().hasOnly([
+                      'codigo',
+                      'marca',
+                      'modelo',
+                      'color',
+                      'forma',
+                      'material',
+                      'talla',
+                      'imagenUrl',
+                      'disponible',
+                      'activo',
+                      'fechaRegistro'
+                    ])
+                    && request.resource.data.codigo is string
+                    && request.resource.data.marca is string
+                    && request.resource.data.modelo is string
+                    && request.resource.data.color is string
+                    && request.resource.data.forma is string
+                    && request.resource.data.material is string
+                    && request.resource.data.talla is string
+                    && request.resource.data.disponible == true
+                    && request.resource.data.activo == true
+                    && request.resource.data.fechaRegistro == request.time
+                    && (
+                      !request.resource.data.keys().hasAny(['imagenUrl'])
+                      || request.resource.data.imagenUrl is string
+                    );
+
+      allow update: if esAdministradorActivo()
+                    && (
+                      (
+                        resource.data.activo == true
+                        && request.resource.data
+                            .diff(resource.data)
+                            .affectedKeys()
+                            .hasOnly([
+                              'codigo',
+                              'marca',
+                              'modelo',
+                              'color',
+                              'forma',
+                              'material',
+                              'talla',
+                              'imagenUrl'
+                            ])
+                        && request.resource.data.codigo is string
+                        && request.resource.data.marca is string
+                        && request.resource.data.modelo is string
+                        && request.resource.data.color is string
+                        && request.resource.data.forma is string
+                        && request.resource.data.material is string
+                        && request.resource.data.talla is string
+                      )
+                      ||
+                      (
+                        resource.data.activo == true
+                        && request.resource.data
+                            .diff(resource.data)
+                            .affectedKeys()
+                            .hasOnly(['disponible'])
+                        && request.resource.data.disponible is bool
+                      )
+                      ||
+                      (
+                        resource.data.activo == true
+                        && request.resource.data
+                            .diff(resource.data)
+                            .affectedKeys()
+                            .hasOnly(['activo'])
+                        && request.resource.data.activo == false
+                      )
+                    );
+
+      allow delete: if false;
+    }
+    
+  }
+}

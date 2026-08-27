@@ -15,11 +15,13 @@ class ClientDetailViewModel extends ChangeNotifier {
 
   bool _isLoading = false;
   bool _isDeactivating = false;
+  bool _isSavingPhoto = false;
   Client? _client;
   String? _errorMessage;
 
   bool get isLoading => _isLoading;
   bool get isDeactivating => _isDeactivating;
+  bool get isSavingPhoto => _isSavingPhoto;
   Client? get client => _client;
   String? get errorMessage => _errorMessage;
 
@@ -36,6 +38,46 @@ class ClientDetailViewModel extends ChangeNotifier {
       _errorMessage = 'Ocurrió un error inesperado al cargar el cliente.';
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> saveFacePhoto(String filePath) async {
+    if (_isSavingPhoto) {
+      return false;
+    }
+
+    _isSavingPhoto = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final photoUrl = await _clientRepository.saveFacePhoto(
+        clientId: _clientId,
+        filePath: filePath,
+      );
+      final currentClient = _client;
+      if (currentClient != null) {
+        _client = Client(
+          id: currentClient.id,
+          nombres: currentClient.nombres,
+          apellidos: currentClient.apellidos,
+          telefono: currentClient.telefono,
+          documentoIdentidad: currentClient.documentoIdentidad,
+          fechaRegistro: currentClient.fechaRegistro,
+          activo: currentClient.activo,
+          fotoFacialUrl: photoUrl,
+        );
+      }
+      return true;
+    } on ClientException catch (error) {
+      _errorMessage = error.message;
+      return false;
+    } catch (_) {
+      _errorMessage = 'Ocurrió un error inesperado al guardar la fotografía.';
+      return false;
+    } finally {
+      _isSavingPhoto = false;
       notifyListeners();
     }
   }

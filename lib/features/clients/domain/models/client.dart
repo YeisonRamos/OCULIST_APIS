@@ -7,6 +7,7 @@ class Client {
     required this.fechaRegistro,
     required this.activo,
     this.documentoIdentidad,
+    this.fotoFacialUrl,
   });
 
   final String id;
@@ -14,6 +15,7 @@ class Client {
   final String apellidos;
   final String telefono;
   final String? documentoIdentidad;
+  final String? fotoFacialUrl;
   final DateTime fechaRegistro;
   final bool activo;
 
