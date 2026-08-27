@@ -64,12 +64,15 @@ class FirestoreClientService {
     await _firestore.collection('clientes').doc(clientId).update(data);
   }
 
-  Future<void> updateFacePhotoUrl({
+  Future<void> updateFaceAnalysis({
     required String clientId,
     required String photoUrl,
+    required String faceShape,
   }) async {
     await _firestore.collection('clientes').doc(clientId).update({
       'fotoFacialUrl': photoUrl,
+      'tipoRostro': faceShape,
+      'fechaAnalisisFacial': FieldValue.serverTimestamp(),
     });
   }
 

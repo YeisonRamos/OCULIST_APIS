@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:oculist/features/clients/domain/exceptions/client_exception.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 import 'package:oculist/features/frames/domain/models/frame.dart';
 import 'package:oculist/features/frames/domain/repositories/frame_repository.dart';
 
@@ -19,54 +20,48 @@ class TryOnSelectionViewModel extends ChangeNotifier {
   final ClientRepository _clientRepository;
   final FrameRepository _frameRepository;
   final String _clientId;
-
   StreamSubscription<List<Frame>>? _subscription;
   Client? _client;
-  List<Frame> _frames = [];
-  Frame? _selectedFrame;
-  String _searchText = '';
+  List<Frame> _recommendations = [];
   bool _isLoading = true;
   String? _errorMessage;
 
   Client? get client => _client;
-  Frame? get selectedFrame => _selectedFrame;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-
-  List<Frame> get filteredFrames {
-    final query = _normalize(_searchText);
-    final availableFrames = _frames.where((frame) => frame.disponible);
-    if (query.isEmpty) return List.unmodifiable(availableFrames);
-
-    return availableFrames.where((frame) {
-      return [
-        frame.codigo,
-        frame.marca,
-        frame.modelo,
-        frame.color,
-        frame.forma,
-      ].any((value) => _normalize(value).contains(query));
-    }).toList();
-  }
+  Frame? get primaryRecommendation =>
+      _recommendations.isEmpty ? null : _recommendations.first;
+  List<Frame> get alternativeRecommendations => _recommendations.length <= 1
+      ? const []
+      : List.unmodifiable(_recommendations.skip(1).take(3));
 
   Future<void> load() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-
     try {
       _client = await _clientRepository.getClientById(_clientId);
+      if (_client?.tipoRostro == null) {
+        _isLoading = false;
+        _errorMessage =
+            'El cliente necesita un análisis facial antes de recibir recomendaciones.';
+        notifyListeners();
+        return;
+      }
       await _subscription?.cancel();
       _subscription = _frameRepository.watchActiveFrames().listen(
         (frames) {
-          _frames = frames;
+          _recommendations = _rankFrames(
+            frames.where((frame) => frame.disponible).toList(),
+            _client!.tipoRostro!,
+          );
           _isLoading = false;
           _errorMessage = null;
           notifyListeners();
         },
         onError: (_) {
           _isLoading = false;
-          _errorMessage = 'No fue posible cargar las monturas disponibles.';
+          _errorMessage = 'No fue posible consultar el catálogo de monturas.';
           notifyListeners();
         },
       );
@@ -76,32 +71,58 @@ class TryOnSelectionViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (_) {
       _isLoading = false;
-      _errorMessage = 'No fue posible preparar el probador virtual.';
+      _errorMessage = 'No fue posible generar la recomendación.';
       notifyListeners();
     }
   }
 
-  void search(String value) {
-    _searchText = value;
-    notifyListeners();
+  List<Frame> _rankFrames(List<Frame> frames, FaceShape shape) {
+    final preferred = _preferredShapes(shape);
+    final ranked =
+        frames
+            .map((frame) => (frame: frame, score: _score(frame, preferred)))
+            .toList()
+          ..sort((a, b) {
+            final comparison = b.score.compareTo(a.score);
+            return comparison != 0
+                ? comparison
+                : a.frame.nombreCompleto.compareTo(b.frame.nombreCompleto);
+          });
+    return ranked.map((item) => item.frame).toList();
   }
 
-  void selectFrame(Frame frame) {
-    _selectedFrame = frame;
-    notifyListeners();
+  int _score(Frame frame, List<String> preferred) {
+    final value = _normalize(frame.forma);
+    for (var index = 0; index < preferred.length; index++) {
+      if (value.contains(preferred[index])) return 100 - index * 10;
+    }
+    return 10;
   }
 
-  String _normalize(String value) {
-    return value
-        .trim()
-        .toLowerCase()
-        .replaceAll('á', 'a')
-        .replaceAll('é', 'e')
-        .replaceAll('í', 'i')
-        .replaceAll('ó', 'o')
-        .replaceAll('ú', 'u')
-        .replaceAll('ñ', 'n');
+  List<String> _preferredShapes(FaceShape shape) {
+    switch (shape) {
+      case FaceShape.round:
+        return ['rectang', 'cuadr', 'wayfarer', 'cat'];
+      case FaceShape.square:
+        return ['redond', 'oval', 'aviador'];
+      case FaceShape.oval:
+        return ['rectang', 'aviador', 'redond', 'cuadr', 'oval'];
+      case FaceShape.oblong:
+        return ['redond', 'oval', 'aviador', 'grande'];
+      case FaceShape.heart:
+        return ['oval', 'redond', 'aviador', 'cat'];
+    }
   }
+
+  String _normalize(String value) => value
+      .trim()
+      .toLowerCase()
+      .replaceAll('á', 'a')
+      .replaceAll('é', 'e')
+      .replaceAll('í', 'i')
+      .replaceAll('ó', 'o')
+      .replaceAll('ú', 'u')
+      .replaceAll('ñ', 'n');
 
   @override
   void dispose() {

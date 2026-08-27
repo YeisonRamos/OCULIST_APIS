@@ -6,6 +6,7 @@ import 'package:oculist/features/authentication/domain/repositories/auth_reposit
 import 'package:oculist/features/authentication/domain/repositories/user_repository.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 import 'package:oculist/features/frames/domain/models/frame.dart';
 import 'package:oculist/features/frames/domain/repositories/frame_repository.dart';
 
@@ -103,6 +104,7 @@ class FakeClientRepository implements ClientRepository {
   Future<String> saveFacePhoto({
     required String clientId,
     required String filePath,
+    required FaceShape faceShape,
   }) async {
     return 'https://example.com/client-face.jpg';
   }

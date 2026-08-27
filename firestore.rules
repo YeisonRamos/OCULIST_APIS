@@ -52,6 +52,8 @@ service cloud.firestore {
                   'telefono',
                   'documentoIdentidad',
                   'fotoFacialUrl',
+                  'tipoRostro',
+                  'fechaAnalisisFacial',
                   'fechaRegistro',
                   'activo'
                 ])
@@ -83,7 +85,9 @@ service cloud.firestore {
                         'apellidos',
                         'telefono',
                         'documentoIdentidad',
-                        'fotoFacialUrl'
+                        'fotoFacialUrl',
+                        'tipoRostro',
+                        'fechaAnalisisFacial'
                       ])
                     && request.resource.data.nombres is string
                     && request.resource.data.apellidos is string
@@ -97,6 +101,20 @@ service cloud.firestore {
                     && (
                       !request.resource.data.keys().hasAny(['fotoFacialUrl'])
                       || request.resource.data.fotoFacialUrl is string
+                    )
+                    && (
+                      !request.resource.data.keys().hasAny(['tipoRostro'])
+                      || request.resource.data.tipoRostro in [
+                        'oval',
+                        'round',
+                        'square',
+                        'oblong',
+                        'heart'
+                      ]
+                    )
+                    && (
+                      !request.resource.data.keys().hasAny(['fechaAnalisisFacial'])
+                      || request.resource.data.fechaAnalisisFacial == request.time
                     )
                   )
                   ||

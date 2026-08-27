@@ -4,6 +4,7 @@ import 'package:oculist/features/clients/data/services/firestore_client_service.
 import 'package:oculist/features/clients/domain/exceptions/client_exception.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 
 class FirestoreClientRepository implements ClientRepository {
   FirestoreClientRepository({
@@ -131,15 +132,17 @@ class FirestoreClientRepository implements ClientRepository {
   Future<String> saveFacePhoto({
     required String clientId,
     required String filePath,
+    required FaceShape faceShape,
   }) async {
     try {
       final photoUrl = await _photoStorageService.uploadFacePhoto(
         clientId: clientId,
         filePath: filePath,
       );
-      await _clientService.updateFacePhotoUrl(
+      await _clientService.updateFaceAnalysis(
         clientId: clientId,
         photoUrl: photoUrl,
+        faceShape: faceShape.firestoreValue,
       );
       return photoUrl;
     } on FirebaseException catch (error) {
@@ -193,6 +196,7 @@ class FirestoreClientRepository implements ClientRepository {
       telefono: data['telefono'] as String? ?? '',
       documentoIdentidad: data['documentoIdentidad'] as String?,
       fotoFacialUrl: data['fotoFacialUrl'] as String?,
+      tipoRostro: FaceShape.fromFirestore(data['tipoRostro'] as String?),
       fechaRegistro: timestamp is Timestamp
           ? timestamp.toDate()
           : DateTime.fromMillisecondsSinceEpoch(0),

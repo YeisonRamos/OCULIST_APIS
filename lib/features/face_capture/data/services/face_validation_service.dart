@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 import 'package:oculist/features/face_capture/domain/models/face_validation_result.dart';
 
 class FaceValidationService {
@@ -11,6 +12,7 @@ class FaceValidationService {
         options: FaceDetectorOptions(
           performanceMode: FaceDetectorMode.accurate,
           minFaceSize: .15,
+          enableContours: true,
         ),
       );
 
@@ -95,7 +97,8 @@ class FaceValidationService {
       );
     }
 
-    return const FaceValidationResult.valid();
+    final shape = _classifyFaceShape(face);
+    return FaceValidationResult.valid(shape);
   }
 
   Future<_ImageMetrics> _analyzeImage(Uint8List bytes) async {
@@ -152,6 +155,55 @@ class FaceValidationService {
     return pixels[index] * .299 +
         pixels[index + 1] * .587 +
         pixels[index + 2] * .114;
+  }
+
+  FaceShape _classifyFaceShape(Face face) {
+    final points = face.contours[FaceContourType.face]?.points;
+    if (points == null || points.length < 12) {
+      return _shapeFromBoundingBox(face);
+    }
+
+    final minX = points.map((point) => point.x).reduce(math.min).toDouble();
+    final maxX = points.map((point) => point.x).reduce(math.max).toDouble();
+    final minY = points.map((point) => point.y).reduce(math.min).toDouble();
+    final maxY = points.map((point) => point.y).reduce(math.max).toDouble();
+    final width = maxX - minX;
+    final height = maxY - minY;
+    if (width <= 0 || height <= 0) return _shapeFromBoundingBox(face);
+
+    double widthAt(double verticalPosition) {
+      final tolerance = height * .13;
+      final targetY = minY + height * verticalPosition;
+      final band = points.where(
+        (point) => (point.y - targetY).abs() <= tolerance,
+      );
+      if (band.length < 2) return width;
+      final bandMin = band.map((point) => point.x).reduce(math.min);
+      final bandMax = band.map((point) => point.x).reduce(math.max);
+      return (bandMax - bandMin).toDouble();
+    }
+
+    final foreheadWidth = widthAt(.22);
+    final cheekWidth = widthAt(.48);
+    final jawWidth = widthAt(.76);
+    final aspectRatio = height / width;
+
+    if (aspectRatio >= 1.48) return FaceShape.oblong;
+    if (foreheadWidth > jawWidth * 1.13) return FaceShape.heart;
+
+    final balancedSides = (foreheadWidth - jawWidth).abs() / width < .10;
+    if (balancedSides && aspectRatio <= 1.20) return FaceShape.round;
+    if (balancedSides && jawWidth >= cheekWidth * .88) {
+      return FaceShape.square;
+    }
+    return FaceShape.oval;
+  }
+
+  FaceShape _shapeFromBoundingBox(Face face) {
+    final ratio = face.boundingBox.height / face.boundingBox.width;
+    if (ratio >= 1.48) return FaceShape.oblong;
+    if (ratio <= 1.18) return FaceShape.round;
+    return FaceShape.oval;
   }
 
   Future<void> close() => _detector.close();

@@ -1,3 +1,5 @@
+import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
+
 class Client {
   const Client({
     required this.id,
@@ -8,6 +10,7 @@ class Client {
     required this.activo,
     this.documentoIdentidad,
     this.fotoFacialUrl,
+    this.tipoRostro,
   });
 
   final String id;
@@ -16,10 +19,9 @@ class Client {
   final String telefono;
   final String? documentoIdentidad;
   final String? fotoFacialUrl;
+  final FaceShape? tipoRostro;
   final DateTime fechaRegistro;
   final bool activo;
 
-  String get nombreCompleto {
-    return '$nombres $apellidos'.trim();
-  }
+  String get nombreCompleto => '$nombres $apellidos'.trim();
 }

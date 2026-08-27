@@ -1,4 +1,5 @@
 import 'package:oculist/features/clients/domain/models/client.dart';
+import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 
 abstract interface class ClientRepository {
   Future<Client> createClient({
@@ -23,6 +24,7 @@ abstract interface class ClientRepository {
   Future<String> saveFacePhoto({
     required String clientId,
     required String filePath,
+    required FaceShape faceShape,
   });
 
   Future<void> deactivateClient(String clientId);

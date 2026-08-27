@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oculist/features/clients/presentation/view_models/client_detail_view_model.dart';
+import 'package:oculist/features/face_capture/domain/models/face_capture_result.dart';
 import 'package:provider/provider.dart';
 
 class ClientDetailView extends StatefulWidget {
@@ -29,25 +30,32 @@ class _ClientDetailViewState extends State<ClientDetailView> {
   }
 
   Future<void> _captureFace(String clientId) async {
-    final imagePath = await context.push<String>(
+    final capture = await context.push<FaceCaptureResult>(
       '/clientes/$clientId/captura-facial',
     );
-    if (!mounted || imagePath == null) return;
+    if (!mounted || capture == null) return;
 
     final viewModel = context.read<ClientDetailViewModel>();
-    final saved = await viewModel.saveFacePhoto(imagePath);
+    final saved = await viewModel.saveFacePhoto(
+      filePath: capture.imagePath,
+      faceShape: capture.faceShape,
+    );
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           saved
-              ? 'Fotografía facial guardada correctamente.'
+              ? 'Rostro ${capture.faceShape.label} detectado. Recomendación preparada.'
               : viewModel.errorMessage ??
                     'No fue posible guardar la fotografía facial.',
         ),
       ),
     );
+
+    if (saved && mounted) {
+      await context.push('/clientes/$clientId/probar-monturas');
+    }
   }
 
   Future<void> _editClient(String clientId) async {
@@ -222,14 +230,17 @@ class _ClientDetailViewState extends State<ClientDetailView> {
           const SizedBox(height: 12),
           FilledButton.tonalIcon(
             onPressed:
-                viewModel.isSavingPhoto || photoUrl == null || photoUrl.isEmpty
+                viewModel.isSavingPhoto ||
+                    photoUrl == null ||
+                    photoUrl.isEmpty ||
+                    client.tipoRostro == null
                 ? null
                 : () => context.push('/clientes/${client.id}/probar-monturas'),
             icon: const Icon(Icons.auto_awesome_rounded),
             label: Text(
               photoUrl == null || photoUrl.isEmpty
-                  ? 'Capture una foto para probar monturas'
-                  : 'Probar monturas',
+                  ? 'Capture una foto para obtener recomendaciones'
+                  : 'Ver recomendación',
             ),
           ),
           const SizedBox(height: 12),

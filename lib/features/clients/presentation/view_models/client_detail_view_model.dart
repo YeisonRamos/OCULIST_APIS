@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:oculist/features/clients/domain/exceptions/client_exception.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 
 class ClientDetailViewModel extends ChangeNotifier {
   ClientDetailViewModel({
@@ -42,7 +43,10 @@ class ClientDetailViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> saveFacePhoto(String filePath) async {
+  Future<bool> saveFacePhoto({
+    required String filePath,
+    required FaceShape faceShape,
+  }) async {
     if (_isSavingPhoto) {
       return false;
     }
@@ -55,6 +59,7 @@ class ClientDetailViewModel extends ChangeNotifier {
       final photoUrl = await _clientRepository.saveFacePhoto(
         clientId: _clientId,
         filePath: filePath,
+        faceShape: faceShape,
       );
       final currentClient = _client;
       if (currentClient != null) {
@@ -67,6 +72,7 @@ class ClientDetailViewModel extends ChangeNotifier {
           fechaRegistro: currentClient.fechaRegistro,
           activo: currentClient.activo,
           fotoFacialUrl: photoUrl,
+          tipoRostro: faceShape,
         );
       }
       return true;
