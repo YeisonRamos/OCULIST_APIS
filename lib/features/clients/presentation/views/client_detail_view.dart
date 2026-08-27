@@ -128,35 +128,6 @@ class _ClientDetailViewState extends State<ClientDetailView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Center(
-            child: Container(
-              width: 190,
-              height: 240,
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 2,
-                ),
-              ),
-              child: photoUrl == null || photoUrl.isEmpty
-                  ? const Icon(Icons.person_outline_rounded, size: 76)
-                  : Image.network(
-                      photoUrl,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.center,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.broken_image_outlined,
-                          size: 64,
-                        );
-                      },
-                    ),
-            ),
-          ),
-          const SizedBox(height: 20),
           Text(
             client.nombreCompleto,
             textAlign: TextAlign.center,
@@ -187,6 +158,48 @@ class _ClientDetailViewState extends State<ClientDetailView> {
             value: client.activo ? 'Activo' : 'Inactivo',
           ),
           const SizedBox(height: 32),
+          Text(
+            'Fotografía facial',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            photoUrl == null || photoUrl.isEmpty
+                ? 'Todavía no se registró una fotografía.'
+                : 'Foto original validada del cliente.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: Container(
+              width: 190,
+              height: 240,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 2,
+                ),
+              ),
+              child: photoUrl == null || photoUrl.isEmpty
+                  ? const Icon(Icons.person_outline_rounded, size: 76)
+                  : Image.network(
+                      photoUrl,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.broken_image_outlined,
+                          size: 64,
+                        );
+                      },
+                    ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: viewModel.isSavingPhoto
                 ? null
