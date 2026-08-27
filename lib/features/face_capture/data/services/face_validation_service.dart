@@ -89,9 +89,9 @@ class FaceValidationService {
         'Hay demasiada luz. Evite colocarse frente a una luz intensa.',
       );
     }
-    if (metrics.sharpness < 7) {
+    if (metrics.sharpness < 2.2) {
       return const FaceValidationResult.invalid(
-        'La fotografía está borrosa. Mantenga el teléfono firme e inténtelo nuevamente.',
+        'La fotografía está demasiado borrosa. Limpie la cámara, mantenga el teléfono firme e inténtelo nuevamente.',
       );
     }
 
