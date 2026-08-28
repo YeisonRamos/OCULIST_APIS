@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:oculist/features/face_capture/domain/models/face_geometry.dart';
 import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 import 'package:oculist/features/face_capture/domain/models/face_validation_result.dart';
 
@@ -13,6 +14,7 @@ class FaceValidationService {
           performanceMode: FaceDetectorMode.accurate,
           minFaceSize: .15,
           enableContours: true,
+          enableLandmarks: true,
         ),
       );
 
@@ -98,7 +100,27 @@ class FaceValidationService {
     }
 
     final shape = _classifyFaceShape(face);
-    return FaceValidationResult.valid(shape);
+    final geometry = _extractGeometry(face, metrics.size);
+    if (geometry == null) {
+      return const FaceValidationResult.invalid(
+        'No se localizaron ambos ojos. Mire al frente y retire cualquier objeto que cubra el rostro.',
+      );
+    }
+    return FaceValidationResult.valid(shape, geometry);
+  }
+
+  FaceGeometry? _extractGeometry(Face face, ui.Size imageSize) {
+    final left = face.landmarks[FaceLandmarkType.leftEye]?.position;
+    final right = face.landmarks[FaceLandmarkType.rightEye]?.position;
+    if (left == null || right == null) return null;
+    return FaceGeometry(
+      leftEyeX: left.x / imageSize.width,
+      leftEyeY: left.y / imageSize.height,
+      rightEyeX: right.x / imageSize.width,
+      rightEyeY: right.y / imageSize.height,
+      imageWidth: imageSize.width,
+      imageHeight: imageSize.height,
+    );
   }
 
   Future<_ImageMetrics> _analyzeImage(Uint8List bytes) async {

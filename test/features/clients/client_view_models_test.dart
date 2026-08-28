@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/face_capture/domain/models/face_geometry.dart';
 import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 import 'package:oculist/features/clients/presentation/view_models/client_detail_view_model.dart';
 import 'package:oculist/features/clients/presentation/view_models/client_list_view_model.dart';
@@ -85,6 +86,7 @@ class FakeClientRepository implements ClientRepository {
     required String clientId,
     required String filePath,
     required FaceShape faceShape,
+    required FaceGeometry faceGeometry,
   }) async {
     return 'https://example.com/client-face.jpg';
   }

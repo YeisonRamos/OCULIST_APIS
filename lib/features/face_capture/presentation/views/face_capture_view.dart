@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:oculist/core/theme/app_theme.dart';
 import 'package:oculist/features/face_capture/data/services/face_validation_service.dart';
 import 'package:oculist/features/face_capture/domain/models/face_capture_result.dart';
+import 'package:oculist/features/face_capture/domain/models/face_geometry.dart';
 import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 
 class FaceCaptureView extends StatefulWidget {
@@ -23,6 +24,7 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
   bool _isValidating = false;
   String? _errorMessage;
   FaceShape? _detectedShape;
+  FaceGeometry? _detectedGeometry;
   final FaceValidationService _validationService = FaceValidationService();
 
   @override
@@ -153,6 +155,7 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
         _capturedImage = image;
         _capturedBytes = bytes;
         _detectedShape = result.faceShape;
+        _detectedGeometry = result.faceGeometry;
       });
     } on CameraException catch (error) {
       if (!mounted) return;
@@ -183,16 +186,22 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
       _capturedImage = null;
       _capturedBytes = null;
       _detectedShape = null;
+      _detectedGeometry = null;
     });
   }
 
   void _usePhoto() {
     final path = _capturedImage?.path;
     final shape = _detectedShape;
-    if (path != null && shape != null) {
-      Navigator.of(
-        context,
-      ).pop(FaceCaptureResult(imagePath: path, faceShape: shape));
+    final geometry = _detectedGeometry;
+    if (path != null && shape != null && geometry != null) {
+      Navigator.of(context).pop(
+        FaceCaptureResult(
+          imagePath: path,
+          faceShape: shape,
+          faceGeometry: geometry,
+        ),
+      );
     }
   }
 

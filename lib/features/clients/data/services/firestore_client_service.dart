@@ -68,10 +68,12 @@ class FirestoreClientService {
     required String clientId,
     required String photoUrl,
     required String faceShape,
+    required Map<String, dynamic> faceGeometry,
   }) async {
     await _firestore.collection('clientes').doc(clientId).update({
       'fotoFacialUrl': photoUrl,
       'tipoRostro': faceShape,
+      'geometriaFacial': faceGeometry,
       'fechaAnalisisFacial': FieldValue.serverTimestamp(),
     });
   }

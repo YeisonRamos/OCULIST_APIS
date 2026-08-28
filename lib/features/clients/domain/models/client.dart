@@ -1,3 +1,4 @@
+import 'package:oculist/features/face_capture/domain/models/face_geometry.dart';
 import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 
 class Client {
@@ -11,6 +12,7 @@ class Client {
     this.documentoIdentidad,
     this.fotoFacialUrl,
     this.tipoRostro,
+    this.geometriaFacial,
   });
 
   final String id;
@@ -20,6 +22,7 @@ class Client {
   final String? documentoIdentidad;
   final String? fotoFacialUrl;
   final FaceShape? tipoRostro;
+  final FaceGeometry? geometriaFacial;
   final DateTime fechaRegistro;
   final bool activo;
 

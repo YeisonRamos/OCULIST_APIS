@@ -4,6 +4,7 @@ import 'package:oculist/features/clients/data/services/firestore_client_service.
 import 'package:oculist/features/clients/domain/exceptions/client_exception.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/face_capture/domain/models/face_geometry.dart';
 import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 
 class FirestoreClientRepository implements ClientRepository {
@@ -133,6 +134,7 @@ class FirestoreClientRepository implements ClientRepository {
     required String clientId,
     required String filePath,
     required FaceShape faceShape,
+    required FaceGeometry faceGeometry,
   }) async {
     try {
       final photoUrl = await _photoStorageService.uploadFacePhoto(
@@ -143,6 +145,7 @@ class FirestoreClientRepository implements ClientRepository {
         clientId: clientId,
         photoUrl: photoUrl,
         faceShape: faceShape.firestoreValue,
+        faceGeometry: faceGeometry.toMap(),
       );
       return photoUrl;
     } on FirebaseException catch (error) {
@@ -197,6 +200,7 @@ class FirestoreClientRepository implements ClientRepository {
       documentoIdentidad: data['documentoIdentidad'] as String?,
       fotoFacialUrl: data['fotoFacialUrl'] as String?,
       tipoRostro: FaceShape.fromFirestore(data['tipoRostro'] as String?),
+      geometriaFacial: FaceGeometry.fromMap(data['geometriaFacial']),
       fechaRegistro: timestamp is Timestamp
           ? timestamp.toDate()
           : DateTime.fromMillisecondsSinceEpoch(0),

@@ -39,6 +39,7 @@ class _ClientDetailViewState extends State<ClientDetailView> {
     final saved = await viewModel.saveFacePhoto(
       filePath: capture.imagePath,
       faceShape: capture.faceShape,
+      faceGeometry: capture.faceGeometry,
     );
     if (!mounted) return;
 
@@ -233,7 +234,8 @@ class _ClientDetailViewState extends State<ClientDetailView> {
                 viewModel.isSavingPhoto ||
                     photoUrl == null ||
                     photoUrl.isEmpty ||
-                    client.tipoRostro == null
+                    client.tipoRostro == null ||
+                    client.geometriaFacial == null
                 ? null
                 : () => context.push('/clientes/${client.id}/probar-monturas'),
             icon: const Icon(Icons.auto_awesome_rounded),

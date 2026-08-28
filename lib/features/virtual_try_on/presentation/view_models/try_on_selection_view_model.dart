@@ -29,6 +29,8 @@ class TryOnSelectionViewModel extends ChangeNotifier {
   Client? get client => _client;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  List<Frame> get recommendations =>
+      List.unmodifiable(_recommendations.take(3));
   Frame? get primaryRecommendation =>
       _recommendations.isEmpty ? null : _recommendations.first;
   List<Frame> get alternativeRecommendations => _recommendations.length <= 1
@@ -41,7 +43,7 @@ class TryOnSelectionViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       _client = await _clientRepository.getClientById(_clientId);
-      if (_client?.tipoRostro == null) {
+      if (_client?.tipoRostro == null || _client?.geometriaFacial == null) {
         _isLoading = false;
         _errorMessage =
             'El cliente necesita un análisis facial antes de recibir recomendaciones.';

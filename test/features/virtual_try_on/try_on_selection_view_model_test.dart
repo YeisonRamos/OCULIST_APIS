@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oculist/features/clients/domain/models/client.dart';
 import 'package:oculist/features/clients/domain/repositories/client_repository.dart';
+import 'package:oculist/features/face_capture/domain/models/face_geometry.dart';
 import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 import 'package:oculist/features/frames/domain/models/frame.dart';
 import 'package:oculist/features/frames/domain/repositories/frame_repository.dart';
@@ -20,6 +21,14 @@ class _ClientRepository implements ClientRepository {
     activo: true,
     fotoFacialUrl: 'https://example.com/rostro.jpg',
     tipoRostro: shape,
+    geometriaFacial: const FaceGeometry(
+      leftEyeX: .35,
+      leftEyeY: .4,
+      rightEyeX: .65,
+      rightEyeY: .4,
+      imageWidth: 900,
+      imageHeight: 1200,
+    ),
   );
 
   @override

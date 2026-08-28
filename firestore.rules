@@ -53,6 +53,7 @@ service cloud.firestore {
                   'documentoIdentidad',
                   'fotoFacialUrl',
                   'tipoRostro',
+                  'geometriaFacial',
                   'fechaAnalisisFacial',
                   'fechaRegistro',
                   'activo'
@@ -87,6 +88,7 @@ service cloud.firestore {
                         'documentoIdentidad',
                         'fotoFacialUrl',
                         'tipoRostro',
+                        'geometriaFacial',
                         'fechaAnalisisFacial'
                       ])
                     && request.resource.data.nombres is string
@@ -112,6 +114,11 @@ service cloud.firestore {
                         'heart'
                       ]
                     )
+                    && (
+                      !request.resource.data.keys().hasAny(['geometriaFacial'])
+                      || request.resource.data.geometriaFacial is map
+                    )
+
                     && (
                       !request.resource.data.keys().hasAny(['fechaAnalisisFacial'])
                       || request.resource.data.fechaAnalisisFacial == request.time

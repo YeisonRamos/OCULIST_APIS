@@ -1,4 +1,5 @@
 import 'package:oculist/features/clients/domain/models/client.dart';
+import 'package:oculist/features/face_capture/domain/models/face_geometry.dart';
 import 'package:oculist/features/face_capture/domain/models/face_shape.dart';
 
 abstract interface class ClientRepository {
@@ -25,6 +26,7 @@ abstract interface class ClientRepository {
     required String clientId,
     required String filePath,
     required FaceShape faceShape,
+    required FaceGeometry faceGeometry,
   });
 
   Future<void> deactivateClient(String clientId);
