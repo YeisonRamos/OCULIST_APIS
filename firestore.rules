@@ -111,6 +111,7 @@ service cloud.firestore {
                         'round',
                         'square',
                         'oblong',
+                        'triangular',
                         'heart'
                       ]
                     )

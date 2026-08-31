@@ -212,6 +212,7 @@ class FaceValidationService {
 
     if (aspectRatio >= 1.48) return FaceShape.oblong;
     if (foreheadWidth > jawWidth * 1.13) return FaceShape.heart;
+    if (jawWidth > foreheadWidth * 1.13) return FaceShape.triangular;
 
     final balancedSides = (foreheadWidth - jawWidth).abs() / width < .10;
     if (balancedSides && aspectRatio <= 1.20) return FaceShape.round;

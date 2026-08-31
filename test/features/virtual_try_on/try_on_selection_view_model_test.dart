@@ -94,4 +94,20 @@ void main() {
     expect(model.primaryRecommendation, round);
     model.dispose();
   });
+
+  test('recomienda montura cat eye para rostro triangular', () async {
+    final catEye = _frame('1', 'Cat eye');
+    final round = _frame('2', 'Redonda');
+    final model = TryOnSelectionViewModel(
+      clientRepository: _ClientRepository(FaceShape.triangular),
+      frameRepository: _FrameRepository([round, catEye]),
+      clientId: 'cliente-1',
+    );
+
+    await model.load();
+    await Future<void>.delayed(Duration.zero);
+
+    expect(model.primaryRecommendation, catEye);
+    model.dispose();
+  });
 }

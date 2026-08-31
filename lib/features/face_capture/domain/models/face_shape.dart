@@ -3,6 +3,7 @@ enum FaceShape {
   round,
   square,
   oblong,
+  triangular,
   heart;
 
   String get firestoreValue => name;
@@ -17,6 +18,8 @@ enum FaceShape {
         return 'Cuadrado';
       case FaceShape.oblong:
         return 'Alargado';
+      case FaceShape.triangular:
+        return 'Triangular';
       case FaceShape.heart:
         return 'Corazón';
     }
@@ -32,6 +35,8 @@ enum FaceShape {
         return 'Frente, pómulos y mandíbula de anchura similar.';
       case FaceShape.oblong:
         return 'Rostro notablemente más largo que ancho.';
+      case FaceShape.triangular:
+        return 'Mandíbula más ancha que la frente, con mayor peso visual en la parte inferior.';
       case FaceShape.heart:
         return 'Parte superior más ancha y mandíbula más estrecha.';
     }

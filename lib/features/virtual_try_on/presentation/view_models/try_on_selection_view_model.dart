@@ -111,6 +111,8 @@ class TryOnSelectionViewModel extends ChangeNotifier {
         return ['rectang', 'aviador', 'redond', 'cuadr', 'oval'];
       case FaceShape.oblong:
         return ['redond', 'oval', 'aviador', 'grande'];
+      case FaceShape.triangular:
+        return ['cat', 'aviador', 'rectang', 'oval'];
       case FaceShape.heart:
         return ['oval', 'redond', 'aviador', 'cat'];
     }

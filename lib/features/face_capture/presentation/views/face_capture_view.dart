@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:oculist/core/theme/app_theme.dart';
 import 'package:oculist/features/face_capture/data/services/face_validation_service.dart';
 import 'package:oculist/features/face_capture/domain/models/face_capture_result.dart';
@@ -26,6 +27,7 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
   FaceShape? _detectedShape;
   FaceGeometry? _detectedGeometry;
   final FaceValidationService _validationService = FaceValidationService();
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -181,6 +183,74 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
     }
   }
 
+  Future<void> _pickPhotoFromGallery() async {
+    if (_isCapturing || _isValidating) return;
+
+    try {
+      final image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 95,
+        maxWidth: 2048,
+      );
+      if (image == null || !mounted) return;
+
+      setState(() => _isValidating = true);
+      final bytes = await image.readAsBytes();
+      final result = await _validationService.validate(
+        imagePath: image.path,
+        bytes: bytes,
+      );
+      if (!mounted) return;
+
+      if (!result.isValid) {
+        await _showInvalidPhoto(result.message);
+        return;
+      }
+
+      setState(() {
+        _capturedImage = image;
+        _capturedBytes = bytes;
+        _detectedShape = result.faceShape;
+        _detectedGeometry = result.faceGeometry;
+      });
+    } on PlatformException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'No fue posible abrir la galería. Revisa los permisos del dispositivo.',
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No fue posible analizar la imagen seleccionada.'),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isValidating = false);
+    }
+  }
+
+  Future<void> _showInvalidPhoto(String message) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.face_retouching_off_rounded),
+        title: const Text('Fotografía no válida'),
+        content: Text(message),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Intentar nuevamente'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _retakePhoto() {
     setState(() {
       _capturedImage = null;
@@ -259,6 +329,13 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
                 icon: const Icon(Icons.refresh_rounded),
                 label: const Text('Intentar nuevamente'),
               ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _pickPhotoFromGallery,
+                icon: const Icon(Icons.photo_library_outlined),
+                label: const Text('Elegir desde galería'),
+                style: OutlinedButton.styleFrom(foregroundColor: Colors.white),
+              ),
             ],
           ),
         ),
@@ -312,6 +389,21 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
               ),
             ),
           ),
+        Positioned(
+          left: 16,
+          bottom: 38,
+          child: FilledButton.tonalIcon(
+            onPressed: (_isCapturing || _isValidating)
+                ? null
+                : _pickPhotoFromGallery,
+            icon: const Icon(Icons.photo_library_outlined),
+            label: const Text('Galería'),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.black.withValues(alpha: .62),
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
         Positioned(
           left: 0,
           right: 0,
