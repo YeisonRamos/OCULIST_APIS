@@ -111,6 +111,68 @@ lib/firebase_options.dart
 - Provider: conecta las pantallas con los ViewModels.
 - GoRouter: controla la navegación y protege rutas.
 
+## Inventario completo de carpetas y archivos del Sprint 1
+
+### Código creado o utilizado
+
+~~~text
+lib/
+├── main.dart
+├── firebase_options.dart
+├── app/oculist_app.dart
+├── app/router/app_router.dart
+├── core/theme/app_theme.dart
+├── features/startup/presentation/views/startup_view.dart
+├── features/authentication/
+│   ├── data/repositories/firebase_auth_repository.dart
+│   ├── data/repositories/firestore_user_repository.dart
+│   ├── data/services/firebase_auth_service.dart
+│   ├── data/services/firestore_user_service.dart
+│   ├── domain/exceptions/auth_exception.dart
+│   ├── domain/exceptions/user_profile_exception.dart
+│   ├── domain/models/user_profile.dart
+│   ├── domain/repositories/auth_repository.dart
+│   ├── domain/repositories/user_repository.dart
+│   ├── presentation/view_models/login_view_model.dart
+│   ├── presentation/view_models/session_view_model.dart
+│   ├── presentation/views/login_view.dart
+│   └── presentation/views/session_view.dart
+└── features/dashboard/presentation/
+    ├── view_models/dashboard_view_model.dart
+    ├── views/administrator_dashboard_view.dart
+    └── views/optician_dashboard_view.dart
+~~~
+
+### Función de los grupos
+
+- `main.dart`: inicia Flutter, Firebase y dependencias.
+- `oculist_app.dart`: configura tema, rutas y repositorios.
+- `app_router.dart`: controla rutas, sesión y roles.
+- `startup`: verifica la sesión inicial.
+- `authentication/data`: comunicación con Firebase.
+- `authentication/domain`: modelos, contratos y excepciones.
+- `authentication/presentation`: pantallas y lógica de sesión.
+- `dashboard`: paneles del óptico y administrador.
+
+### Configuración y pruebas utilizadas
+
+~~~text
+pubspec.yaml
+pubspec.lock
+firebase.json
+android/app/google-services.json
+android/app/build.gradle.kts
+android/settings.gradle.kts
+lib/firebase_options.dart
+analysis_options.yaml
+test/widget_test.dart
+~~~
+
+- `pubspec.yaml`: Firebase, Provider y GoRouter.
+- archivos Firebase y Gradle: conexión con Firebase en Android.
+- `widget_test.dart`: pruebas de las pantallas iniciales.
+
+
 ## Resultado del sprint
 
 El acceso al sistema está controlado. Cada usuario activo entra al panel correspondiente y las rutas privadas no quedan disponibles sin iniciar sesión.
@@ -199,6 +261,59 @@ test/features/clients/client_view_models_test.dart
 - Cloud Firestore para almacenar clientes.
 - Provider y ChangeNotifier para manejar estados.
 - GoRouter para navegar entre registro, lista, detalle y edición.
+
+## Inventario completo de carpetas y archivos del Sprint 2
+
+### Módulo completo de clientes
+
+~~~text
+lib/features/clients/
+├── data/repositories/firestore_client_repository.dart
+├── data/services/firestore_client_service.dart
+├── domain/exceptions/client_exception.dart
+├── domain/models/client.dart
+├── domain/repositories/client_repository.dart
+├── presentation/view_models/register_client_view_model.dart
+├── presentation/view_models/client_list_view_model.dart
+├── presentation/view_models/client_detail_view_model.dart
+├── presentation/view_models/edit_client_view_model.dart
+├── presentation/views/register_client_view.dart
+├── presentation/views/client_list_view.dart
+├── presentation/views/client_detail_view.dart
+└── presentation/views/edit_client_view.dart
+~~~
+
+### Función de los grupos
+
+- `data`: operaciones en Firestore, validación y conversión.
+- `domain`: modelo, contrato y excepciones del cliente.
+- `views`: registro, lista, detalle y edición.
+- `view_models`: lógica y estado de cada pantalla.
+
+### Archivos compartidos modificados
+
+~~~text
+lib/main.dart
+lib/app/oculist_app.dart
+lib/app/router/app_router.dart
+lib/features/dashboard/presentation/views/optician_dashboard_view.dart
+test/widget_test.dart
+test/features/clients/client_view_models_test.dart
+~~~
+
+- aplicación: registró el repositorio.
+- enrutador: añadió las cuatro rutas de clientes.
+- panel: añadió el acceso al módulo.
+- pruebas: validación, registro, búsqueda y desactivación.
+
+### Recurso de Firebase
+
+~~~text
+Colección: clientes
+Campos: nombres, apellidos, telefono, documentoIdentidad,
+fechaRegistro y activo
+~~~
+
 
 ## Resultado del sprint
 
@@ -294,6 +409,71 @@ lib/features/frames/
 ## Recomendación para las imágenes
 
 Las monturas deben fotografiarse de frente y preferiblemente guardarse como PNG con fondo transparente. Esto mejora el resultado de la prueba virtual.
+
+## Inventario completo de carpetas y archivos del Sprint 3
+
+### Módulo completo de monturas
+
+~~~text
+lib/features/frames/
+├── data/repositories/firestore_frame_repository.dart
+├── data/services/firestore_frame_service.dart
+├── data/services/frame_storage_service.dart
+├── domain/exceptions/frame_exception.dart
+├── domain/models/frame.dart
+├── domain/repositories/frame_repository.dart
+├── presentation/view_models/register_frame_view_model.dart
+├── presentation/view_models/frame_list_view_model.dart
+├── presentation/view_models/frame_detail_view_model.dart
+├── presentation/view_models/edit_frame_view_model.dart
+├── presentation/views/register_frame_view.dart
+├── presentation/views/frame_list_view.dart
+├── presentation/views/frame_detail_view.dart
+└── presentation/views/edit_frame_view.dart
+~~~
+
+### Función de los grupos
+
+- `data/services`: Firestore e imágenes de Firebase Storage.
+- `data/repositories`: coordina datos, imágenes y errores.
+- `domain`: modelo, contrato y excepciones de monturas.
+- `views`: registro, catálogo, detalle y edición.
+- `view_models`: lógica, validación, disponibilidad y permisos.
+
+### Archivos compartidos y configuración modificados
+
+~~~text
+lib/main.dart
+lib/app/oculist_app.dart
+lib/app/router/app_router.dart
+lib/core/theme/app_theme.dart
+lib/core/widgets/app_branding.dart
+lib/features/authentication/data/repositories/firestore_user_repository.dart
+lib/features/dashboard/presentation/view_models/dashboard_view_model.dart
+lib/features/dashboard/presentation/views/administrator_dashboard_view.dart
+lib/features/dashboard/presentation/views/optician_dashboard_view.dart
+lib/features/dashboard/presentation/widgets/dashboard_home.dart
+lib/firebase_options.dart
+pubspec.yaml
+pubspec.lock
+test/widget_test.dart
+~~~
+
+- enrutador: rutas del catálogo y permisos administrativos.
+- dashboard: accesos al catálogo para ambos roles.
+- tema y branding: diseño visual común.
+- `pubspec.yaml`: Firebase Storage e Image Picker.
+- pruebas: repositorios y rutas del catálogo.
+
+### Recursos de Firebase
+
+~~~text
+Firestore: colección monturas
+Storage: imágenes del catálogo
+Campos: codigo, marca, modelo, color, forma, material, talla,
+imagenUrl, disponible, activo y fechaRegistro
+~~~
+
 
 ## Resultado del sprint
 
@@ -400,6 +580,83 @@ test/features/virtual_try_on/try_on_selection_view_model_test.dart
 
 La aplicación no genera una cara nueva mediante inteligencia artificial. Utiliza la fotografía real del cliente y coloca encima la imagen de una montura del catálogo. La imagen original de la montura no se modifica en Firebase; la eliminación del fondo se realiza temporalmente al mostrar la recomendación.
 
+## Inventario completo de carpetas y archivos del Sprint 4
+
+### Captura facial
+
+~~~text
+lib/features/face_capture/
+├── data/services/face_validation_service.dart
+├── domain/models/face_capture_result.dart
+├── domain/models/face_validation_result.dart
+├── domain/models/face_shape.dart
+├── domain/models/face_geometry.dart
+└── presentation/views/face_capture_view.dart
+~~~
+
+### Recomendación y prueba virtual
+
+~~~text
+lib/features/virtual_try_on/
+├── presentation/view_models/try_on_selection_view_model.dart
+├── presentation/views/try_on_selection_view.dart
+└── presentation/widgets/virtual_frame_preview.dart
+~~~
+
+### Archivos de clientes ampliados
+
+~~~text
+lib/features/clients/data/repositories/firestore_client_repository.dart
+lib/features/clients/data/services/firestore_client_service.dart
+lib/features/clients/data/services/client_photo_storage_service.dart
+lib/features/clients/domain/models/client.dart
+lib/features/clients/domain/repositories/client_repository.dart
+lib/features/clients/presentation/view_models/client_detail_view_model.dart
+lib/features/clients/presentation/views/client_detail_view.dart
+~~~
+
+### Función de los grupos
+
+- `face_capture_view.dart`: cámara, captura, confirmación y repetición.
+- `face_validation_service.dart`: ML Kit, posición, luz y nitidez.
+- modelos faciales: resultado, forma del rostro y coordenadas de ojos.
+- `try_on_selection_view_model.dart`: ordena y limita a tres monturas.
+- `try_on_selection_view.dart`: presenta las recomendaciones.
+- `virtual_frame_preview.dart`: superpone, escala, inclina y limpia el fondo.
+- archivos de clientes: suben la foto y guardan el análisis.
+
+### Configuración, permisos, reglas y pruebas
+
+~~~text
+lib/main.dart
+lib/app/router/app_router.dart
+android/app/src/main/AndroidManifest.xml
+ios/Runner/Info.plist
+firebase.json
+firestore.rules
+storage.rules
+pubspec.yaml
+pubspec.lock
+test/widget_test.dart
+test/features/clients/client_view_models_test.dart
+test/features/virtual_try_on/try_on_selection_view_model_test.dart
+~~~
+
+- manifiestos: permisos de cámara.
+- reglas: permisos para foto y geometría facial.
+- `pubspec.yaml`: Camera, ML Kit e Image.
+- pruebas: clientes, ranking de monturas y pantalla inicial.
+
+### Campos agregados al cliente
+
+~~~text
+fotoFacialUrl
+tipoRostro
+geometriaFacial
+fechaAnalisisFacial
+~~~
+
+
 ## Resultado y validación
 
 - Análisis estático de Flutter sin errores.
@@ -489,6 +746,55 @@ Colección `recomendaciones`:
 - Validar los campos obligatorios.
 - Impedir eliminaciones accidentales.
 - Comprobar que los identificadores y fechas sean válidos.
+
+## Inventario completo propuesto para el Sprint 5
+
+### Archivos nuevos
+
+~~~text
+lib/features/recommendations/
+├── data/repositories/firestore_recommendation_repository.dart
+├── data/services/firestore_recommendation_service.dart
+├── domain/exceptions/recommendation_exception.dart
+├── domain/models/recommendation.dart
+├── domain/repositories/recommendation_repository.dart
+├── presentation/view_models/recommendation_history_view_model.dart
+├── presentation/view_models/recommendation_detail_view_model.dart
+├── presentation/views/recommendation_history_view.dart
+└── presentation/views/recommendation_detail_view.dart
+
+test/features/recommendations/
+├── recommendation_view_models_test.dart
+└── recommendation_repository_test.dart
+~~~
+
+### Archivos existentes que deberán modificarse
+
+~~~text
+lib/main.dart
+lib/app/oculist_app.dart
+lib/app/router/app_router.dart
+lib/features/clients/presentation/views/client_detail_view.dart
+lib/features/virtual_try_on/presentation/view_models/try_on_selection_view_model.dart
+lib/features/virtual_try_on/presentation/views/try_on_selection_view.dart
+firestore.rules
+test/widget_test.dart
+~~~
+
+- aplicación: registrará el nuevo repositorio.
+- enrutador: rutas del historial y detalle.
+- detalle del cliente: botón para abrir el historial.
+- prueba virtual: guardar resultado y montura elegida.
+- reglas: proteger la colección `recomendaciones`.
+
+### Recurso que se creará
+
+~~~text
+Colección Firestore: recomendaciones
+Campos: clienteId, fecha, tipoRostro, fotoFacialUrl,
+monturasRecomendadas, monturaSeleccionadaId y usuarioResponsableId
+~~~
+
 
 ## Criterio para completar el sprint
 
@@ -592,6 +898,61 @@ firestore.rules
 - Resultados de pruebas.
 - Capturas de pantalla de cada módulo.
 - Lista de APIs, servicios y librerías utilizadas.
+
+## Inventario completo propuesto para el Sprint 6
+
+### Archivos nuevos de reportes
+
+~~~text
+lib/features/reports/
+├── data/repositories/firestore_report_repository.dart
+├── data/services/firestore_report_service.dart
+├── domain/models/report_summary.dart
+├── domain/repositories/report_repository.dart
+├── presentation/view_models/reports_view_model.dart
+├── presentation/views/reports_view.dart
+├── presentation/widgets/report_summary_card.dart
+└── presentation/widgets/report_chart.dart
+
+test/features/reports/
+├── reports_view_model_test.dart
+└── reports_view_test.dart
+~~~
+
+### Archivos existentes que deberán modificarse
+
+~~~text
+lib/main.dart
+lib/app/oculist_app.dart
+lib/app/router/app_router.dart
+lib/core/theme/app_theme.dart
+lib/core/widgets/app_branding.dart
+lib/features/dashboard/presentation/views/administrator_dashboard_view.dart
+lib/features/dashboard/presentation/widgets/dashboard_home.dart
+firestore.rules
+pubspec.yaml
+test/widget_test.dart
+~~~
+
+### Documentos y pruebas integrales que deberán crearse
+
+~~~text
+docs/MANUAL_DE_USUARIO.md
+docs/DOCUMENTACION_TECNICA.md
+docs/MODELO_DE_DATOS.md
+docs/CASOS_DE_USO.md
+docs/RESULTADOS_DE_PRUEBAS.md
+test/integration/authentication_flow_test.dart
+test/integration/client_flow_test.dart
+test/integration/recommendation_flow_test.dart
+~~~
+
+- `reports`: consulta, agrupa y presenta estadísticas.
+- panel administrativo: acceso a los reportes.
+- enrutador: ruta protegida de reportes.
+- pruebas integrales: comprueban flujos completos.
+- documentos: material de uso, mantenimiento y defensa.
+
 
 ## Criterio para completar el sprint
 
