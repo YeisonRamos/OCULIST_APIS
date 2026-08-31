@@ -392,6 +392,7 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
         Positioned(
           left: 16,
           bottom: 38,
+          width: 124,
           child: FilledButton.tonalIcon(
             onPressed: (_isCapturing || _isValidating)
                 ? null
