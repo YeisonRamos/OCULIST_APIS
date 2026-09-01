@@ -33,6 +33,12 @@ class AdministratorDashboardView extends StatelessWidget {
       onLogout: () => _logout(context),
       actions: [
         DashboardAction(
+          title: 'Gestionar usuarios',
+          subtitle: 'Registra y controla las cuentas de ópticos',
+          icon: Icons.manage_accounts_outlined,
+          onTap: () => context.push('/usuarios'),
+        ),
+        DashboardAction(
           title: 'Registrar montura',
           subtitle:
               'AÃƒÆ’Ã‚Â±ade modelos y fotografÃƒÆ’Ã‚Â­as al catÃƒÆ’Ã‚Â¡logo',

@@ -26,10 +26,28 @@ service cloud.firestore {
     }
 
     match /usuarios/{uid} {
-      allow read: if estaAutenticado()
-                  && request.auth.uid == uid;
-
-      allow write: if false;
+      allow read: if (estaAutenticado() && request.auth.uid == uid)
+                  || esAdministradorActivo();
+      allow create: if esAdministradorActivo()
+                    && request.resource.data.keys().hasAll([
+                      'nombreCompleto', 'correo', 'rol', 'activo', 'fechaRegistro'
+                    ])
+                    && request.resource.data.keys().hasOnly([
+                      'nombreCompleto', 'correo', 'rol', 'activo', 'fechaRegistro'
+                    ])
+                    && request.resource.data.nombreCompleto is string
+                    && request.resource.data.correo is string
+                    && request.resource.data.rol == 'optico'
+                    && request.resource.data.activo == true
+                    && request.resource.data.fechaRegistro == request.time;
+      allow update: if esAdministradorActivo()
+                    && resource.data.rol == 'optico'
+                    && request.resource.data.rol == 'optico'
+                    && request.resource.data.diff(resource.data)
+                      .affectedKeys().hasOnly(['nombreCompleto', 'activo'])
+                    && request.resource.data.nombreCompleto is string
+                    && request.resource.data.activo is bool;
+      allow delete: if false;
     }
 
     match /clientes/{clienteId} {

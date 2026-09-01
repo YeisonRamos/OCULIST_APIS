@@ -32,6 +32,8 @@ import 'package:oculist/features/frames/presentation/view_models/edit_frame_view
 import 'package:oculist/features/frames/presentation/views/edit_frame_view.dart';
 import 'package:oculist/features/virtual_try_on/presentation/view_models/try_on_selection_view_model.dart';
 import 'package:oculist/features/virtual_try_on/presentation/views/try_on_selection_view.dart';
+import 'package:oculist/features/user_management/presentation/view_models/user_management_view_model.dart';
+import 'package:oculist/features/user_management/presentation/views/user_management_view.dart';
 import 'package:oculist/features/recommendation_rules/presentation/view_models/recommendation_rules_view_model.dart';
 import 'package:oculist/features/recommendation_rules/presentation/views/recommendation_rules_view.dart';
 
@@ -232,6 +234,16 @@ final class AppRouter {
         },
       ),
 
+      GoRoute(
+        path: '/usuarios',
+        name: 'userManagement',
+        redirect: (context, state) =>
+            _protectRoute(context, requiredRole: UserRole.administrador),
+        builder: (context, state) => ChangeNotifierProvider(
+          create: (_) => UserManagementViewModel(),
+          child: const UserManagementView(),
+        ),
+      ),
       GoRoute(
         path: '/configuracion/recomendacion',
         redirect: (context, state) =>
