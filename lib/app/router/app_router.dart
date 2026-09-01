@@ -164,7 +164,7 @@ final class AppRouter {
 
           if (clientId == null || clientId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Cliente no vÃ¡lido.')),
+              body: Center(child: Text('Cliente no válido.')),
             );
           }
 
@@ -193,7 +193,7 @@ final class AppRouter {
           final clientId = state.pathParameters['clientId'];
           if (clientId == null || clientId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Cliente no vÃ¡lido.')),
+              body: Center(child: Text('Cliente no válido.')),
             );
           }
 
@@ -220,7 +220,7 @@ final class AppRouter {
 
           if (clientId == null || clientId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Cliente no vÃ¡lido.')),
+              body: Center(child: Text('Cliente no válido.')),
             );
           }
 
@@ -298,7 +298,7 @@ final class AppRouter {
 
           if (frameId == null || frameId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Montura no vÃ¡lida.')),
+              body: Center(child: Text('Montura no válida.')),
             );
           }
 
@@ -326,7 +326,7 @@ final class AppRouter {
 
           if (frameId == null || frameId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Montura no vÃ¡lida.')),
+              body: Center(child: Text('Montura no válida.')),
             );
           }
 

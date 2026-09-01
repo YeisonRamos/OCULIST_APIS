@@ -22,7 +22,7 @@ class _State extends State<RecommendationRulesView> {
   Widget build(BuildContext context) {
     final m = context.watch<RecommendationRulesViewModel>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Reglas de recomendaciÃƒÆ’Ã‚Â³n')),
+      appBar: AppBar(title: const Text('Reglas de recomendación')),
       body: m.isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView(

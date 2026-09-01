@@ -90,7 +90,7 @@ class TryOnSelectionViewModel extends ChangeNotifier {
       if (_client?.tipoRostro == null || _client?.geometriaFacial == null) {
         _isLoading = false;
         _errorMessage =
-            'El cliente necesita un anÃ¡lisis facial antes de recibir recomendaciones.';
+            'El cliente necesita un análisis facial antes de recibir recomendaciones.';
         notifyListeners();
         return;
       }
@@ -114,7 +114,7 @@ class TryOnSelectionViewModel extends ChangeNotifier {
         },
         onError: (_) {
           _isLoading = false;
-          _errorMessage = 'No fue posible consultar el catÃ¡logo de monturas.';
+          _errorMessage = 'No fue posible consultar el catálogo de monturas.';
           notifyListeners();
         },
       );
@@ -124,7 +124,7 @@ class TryOnSelectionViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (_) {
       _isLoading = false;
-      _errorMessage = 'No fue posible generar la recomendaciÃ³n.';
+      _errorMessage = 'No fue posible generar la recomendación.';
       notifyListeners();
     }
   }
@@ -210,12 +210,12 @@ class TryOnSelectionViewModel extends ChangeNotifier {
   String _normalize(String value) => value
       .trim()
       .toLowerCase()
-      .replaceAll('Ã¡', 'a')
-      .replaceAll('Ã©', 'e')
-      .replaceAll('Ã­', 'i')
-      .replaceAll('Ã³', 'o')
-      .replaceAll('Ãº', 'u')
-      .replaceAll('Ã±', 'n');
+      .replaceAll('á', 'a')
+      .replaceAll('é', 'e')
+      .replaceAll('í', 'i')
+      .replaceAll('ó', 'o')
+      .replaceAll('ú', 'u')
+      .replaceAll('ñ', 'n');
 
   @override
   void dispose() {

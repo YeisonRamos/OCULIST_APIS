@@ -225,7 +225,7 @@ class FakeFrameRepository implements FrameRepository {
 }
 
 void main() {
-  testWidgets('Muestra correctamente la pantalla de inicio de sesiÃƒÂ³n', (
+  testWidgets('Muestra correctamente la pantalla de inicio de sesión', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(

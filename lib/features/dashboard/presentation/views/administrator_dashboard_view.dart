@@ -16,7 +16,7 @@ class AdministratorDashboardView extends StatelessWidget {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('No fue posible cerrar la sesiÃƒÆ’Ã‚Â³n.')),
+      const SnackBar(content: Text('No fue posible cerrar la sesión.')),
     );
   }
 
@@ -40,8 +40,7 @@ class AdministratorDashboardView extends StatelessWidget {
         ),
         DashboardAction(
           title: 'Registrar montura',
-          subtitle:
-              'AÃƒÆ’Ã‚Â±ade modelos y fotografÃƒÆ’Ã‚Â­as al catÃƒÆ’Ã‚Â¡logo',
+          subtitle: 'Añade modelos y fotografías al catálogo',
           icon: Icons.add_box_outlined,
           onTap: () => context.push('/monturas/registrar'),
         ),

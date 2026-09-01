@@ -66,7 +66,7 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'Estas monturas del catÃƒÂ¡logo son las que mejor combinan con tus proporciones.',
+                  'Estas monturas del catálogo son las que mejor combinan con tus proporciones.',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -81,14 +81,14 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Personaliza la recomendaciÃƒÂ³n',
+                  'Personaliza la recomendación',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
                 _PreferenceDropdown(
                   label: 'Talla preferida',
                   value: model.preferences.size,
-                  values: const ['PequeÃƒÂ±a', 'Mediana', 'Grande'],
+                  values: const ['Pequeña', 'Mediana', 'Grande'],
                   onChanged: (v) => model.updatePreferences(size: v),
                 ),
                 _PreferenceDropdown(
@@ -109,7 +109,7 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
                   label: 'Estilo preferido',
                   value: model.preferences.style,
                   values: const [
-                    'ClÃƒÂ¡sico',
+                    'Clásico',
                     'Moderno',
                     'Elegante',
                     'Deportivo',
@@ -127,14 +127,14 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
             child: Padding(
               padding: EdgeInsets.all(22),
               child: Text(
-                'No hay monturas disponibles en el catÃƒÂ¡logo.',
+                'No hay monturas disponibles en el catálogo.',
                 textAlign: TextAlign.center,
               ),
             ),
           )
         else ...[
           Text(
-            'AsÃƒÂ­ se verÃƒÂ­an contigo',
+            'Así se verían contigo',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 5),
@@ -158,7 +158,7 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
           ),
         ],
         const Text(
-          'La posiciÃƒÂ³n se calcula con los ojos detectados. Para un resultado limpio, las monturas deben usar imÃƒÂ¡genes PNG con fondo transparente.',
+          'La posición se calcula con los ojos detectados. Para un resultado limpio, las monturas deben usar imágenes PNG con fondo transparente.',
           textAlign: TextAlign.center,
           style: TextStyle(color: Color(0xFF756765)),
         ),
@@ -229,7 +229,7 @@ class _RecommendationCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '${frame.forma} Ã¢â‚¬Â¢ ${frame.color} Ã¢â‚¬Â¢ Talla ${frame.talla} Ã¢â‚¬Â¢ ${frame.estilo}',
+                        '${frame.forma} • ${frame.color} • Talla ${frame.talla} • ${frame.estilo}',
                       ),
                       const SizedBox(height: 8),
                       Text(

@@ -129,16 +129,6 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-
-                _buildField(
-                  controller: _styleController,
-                  label: 'Estilo',
-                  icon: Icons.auto_awesome_outlined,
-                  viewModel: viewModel,
-                  fieldName:
-                      'el estilo (clásico, moderno, elegante, deportivo o casual)',
-                ),
-                const SizedBox(height: 8),
                 const Text(
                   'Registra una montura disponible en la óptica OCULIST.',
                   textAlign: TextAlign.center,
