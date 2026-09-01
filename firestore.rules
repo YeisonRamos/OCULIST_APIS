@@ -153,6 +153,7 @@ service cloud.firestore {
                       'forma',
                       'material',
                       'talla',
+                      'estilo',
                       'disponible',
                       'activo',
                       'fechaRegistro'
@@ -165,6 +166,7 @@ service cloud.firestore {
                       'forma',
                       'material',
                       'talla',
+                      'estilo',
                       'imagenUrl',
                       'disponible',
                       'activo',
@@ -177,6 +179,7 @@ service cloud.firestore {
                     && request.resource.data.forma is string
                     && request.resource.data.material is string
                     && request.resource.data.talla is string
+                    && request.resource.data.estilo is string
                     && request.resource.data.disponible == true
                     && request.resource.data.activo == true
                     && request.resource.data.fechaRegistro == request.time
@@ -200,6 +203,7 @@ service cloud.firestore {
                               'forma',
                               'material',
                               'talla',
+                              'estilo',
                               'imagenUrl'
                             ])
                         && request.resource.data.codigo is string
@@ -209,6 +213,7 @@ service cloud.firestore {
                         && request.resource.data.forma is string
                         && request.resource.data.material is string
                         && request.resource.data.talla is string
+                        && request.resource.data.estilo is string
                       )
                       ||
                       (
@@ -233,5 +238,22 @@ service cloud.firestore {
       allow delete: if false;
     }
     
+    match /configuracion/recomendacion {
+      allow read: if esOpticoActivo() || esAdministradorActivo();
+      allow create, update: if esAdministradorActivo()
+        && request.resource.data.keys().hasOnly(['forma', 'talla', 'color', 'estilo', 'fechaActualizacion'])
+        && request.resource.data.forma is int
+        && request.resource.data.talla is int
+        && request.resource.data.color is int
+        && request.resource.data.estilo is int
+        && request.resource.data.forma >= 0
+        && request.resource.data.talla >= 0
+        && request.resource.data.color >= 0
+        && request.resource.data.estilo >= 0
+        && request.resource.data.forma + request.resource.data.talla
+           + request.resource.data.color + request.resource.data.estilo == 100
+        && request.resource.data.fechaActualizacion == request.time;
+      allow delete: if false;
+    }
   }
 }

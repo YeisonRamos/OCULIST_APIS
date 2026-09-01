@@ -123,6 +123,7 @@ class FakeFrameRepository implements FrameRepository {
     required String modelo,
     required String color,
     required String forma,
+    required String estilo,
     required String material,
     required String talla,
     String? imagenUrl,
@@ -173,6 +174,7 @@ class FakeFrameRepository implements FrameRepository {
     required String modelo,
     required String color,
     required String forma,
+    required String estilo,
     required String material,
     required String talla,
   }) async {
@@ -223,7 +225,7 @@ class FakeFrameRepository implements FrameRepository {
 }
 
 void main() {
-  testWidgets('Muestra correctamente la pantalla de inicio de sesión', (
+  testWidgets('Muestra correctamente la pantalla de inicio de sesiÃƒÂ³n', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(

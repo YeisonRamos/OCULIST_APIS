@@ -20,6 +20,7 @@ class _EditFrameViewState extends State<EditFrameView> {
   final _shapeController = TextEditingController();
   final _materialController = TextEditingController();
   final _sizeController = TextEditingController();
+  final _styleController = TextEditingController();
 
   @override
   void initState() {
@@ -50,6 +51,7 @@ class _EditFrameViewState extends State<EditFrameView> {
     _shapeController.text = frame.forma;
     _materialController.text = frame.material;
     _sizeController.text = frame.talla;
+    _styleController.text = frame.estilo;
   }
 
   Future<void> _save() async {
@@ -69,6 +71,7 @@ class _EditFrameViewState extends State<EditFrameView> {
       forma: _shapeController.text,
       material: _materialController.text,
       talla: _sizeController.text,
+      estilo: _styleController.text,
     );
 
     if (!mounted) {
@@ -102,6 +105,7 @@ class _EditFrameViewState extends State<EditFrameView> {
     _shapeController.dispose();
     _materialController.dispose();
     _sizeController.dispose();
+    _styleController.dispose();
     super.dispose();
   }
 
@@ -161,6 +165,11 @@ class _EditFrameViewState extends State<EditFrameView> {
                       viewModel: viewModel,
                     ),
 
+                    _field(
+                      controller: _styleController,
+                      label: 'Estilo',
+                      viewModel: viewModel,
+                    ),
                     const SizedBox(height: 12),
 
                     SizedBox(

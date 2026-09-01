@@ -25,6 +25,7 @@ class FirestoreFrameRepository implements FrameRepository {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
   }) async {
     final cleanCode = codigo.trim();
     final cleanBrand = marca.trim();
@@ -33,6 +34,7 @@ class FirestoreFrameRepository implements FrameRepository {
     final cleanShape = forma.trim();
     final cleanMaterial = material.trim();
     final cleanSize = talla.trim();
+    final cleanStyle = estilo.trim();
 
     try {
       await _frameService.updateFrame(
@@ -44,6 +46,7 @@ class FirestoreFrameRepository implements FrameRepository {
         forma: cleanShape,
         material: cleanMaterial,
         talla: cleanSize,
+        estilo: cleanStyle,
       );
 
       return await getFrameById(frameId);
@@ -139,6 +142,7 @@ class FirestoreFrameRepository implements FrameRepository {
       forma: data['forma'] as String? ?? '',
       material: data['material'] as String? ?? '',
       talla: data['talla'] as String? ?? '',
+      estilo: data['estilo'] as String? ?? 'Sin definir',
       imagenUrl: data['imagenUrl'] as String?,
       disponible: data['disponible'] as bool? ?? false,
       activo: data['activo'] as bool? ?? false,
@@ -157,6 +161,7 @@ class FirestoreFrameRepository implements FrameRepository {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
     String? imagenUrl,
   }) async {
     final cleanCode = codigo.trim();
@@ -166,6 +171,7 @@ class FirestoreFrameRepository implements FrameRepository {
     final cleanShape = forma.trim();
     final cleanMaterial = material.trim();
     final cleanSize = talla.trim();
+    final cleanStyle = estilo.trim();
     final cleanImageUrl = imagenUrl?.trim();
 
     try {
@@ -177,6 +183,8 @@ class FirestoreFrameRepository implements FrameRepository {
         forma: cleanShape,
         material: cleanMaterial,
         talla: cleanSize,
+        estilo: cleanStyle,
+
         imagenUrl: cleanImageUrl?.isEmpty == true ? null : cleanImageUrl,
       );
 
@@ -189,6 +197,8 @@ class FirestoreFrameRepository implements FrameRepository {
         forma: cleanShape,
         material: cleanMaterial,
         talla: cleanSize,
+        estilo: cleanStyle,
+
         imagenUrl: cleanImageUrl?.isEmpty == true ? null : cleanImageUrl,
         disponible: true,
         activo: true,

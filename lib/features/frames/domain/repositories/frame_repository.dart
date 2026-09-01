@@ -9,6 +9,7 @@ abstract interface class FrameRepository {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
     String? imagenUrl,
   });
 
@@ -25,6 +26,7 @@ abstract interface class FrameRepository {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
   });
 
   Future<void> setAvailability({

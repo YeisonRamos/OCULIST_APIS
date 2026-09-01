@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 
 class TryOnSelectionView extends StatefulWidget {
   const TryOnSelectionView({super.key});
-
   @override
   State<TryOnSelectionView> createState() => _TryOnSelectionViewState();
 }
@@ -44,13 +43,8 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
         ),
       );
     }
-
     final client = model.client!;
-    final shape = client.tipoRostro!;
-    final geometry = client.geometriaFacial!;
-    final facePhotoUrl = client.fotoFacialUrl!;
     final recommendations = model.recommendations;
-
     return ListView(
       padding: const EdgeInsets.all(18),
       children: [
@@ -67,13 +61,61 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Rostro ${shape.label}',
+                  'Rostro ${client.tipoRostro!.label}',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  'Estas monturas del catálogo son las que mejor combinan con tus proporciones.',
+                const Text(
+                  'Estas monturas del catÃƒÂ¡logo son las que mejor combinan con tus proporciones.',
                   textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Personaliza la recomendaciÃƒÂ³n',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                _PreferenceDropdown(
+                  label: 'Talla preferida',
+                  value: model.preferences.size,
+                  values: const ['PequeÃƒÂ±a', 'Mediana', 'Grande'],
+                  onChanged: (v) => model.updatePreferences(size: v),
+                ),
+                _PreferenceDropdown(
+                  label: 'Color preferido',
+                  value: model.preferences.color,
+                  values: const [
+                    'Negro',
+                    'Carey',
+                    'Dorado',
+                    'Plateado',
+                    'Rojo',
+                    'Azul',
+                    'Transparente',
+                  ],
+                  onChanged: (v) => model.updatePreferences(color: v),
+                ),
+                _PreferenceDropdown(
+                  label: 'Estilo preferido',
+                  value: model.preferences.style,
+                  values: const [
+                    'ClÃƒÂ¡sico',
+                    'Moderno',
+                    'Elegante',
+                    'Deportivo',
+                    'Casual',
+                  ],
+                  onChanged: (v) => model.updatePreferences(style: v),
                 ),
               ],
             ),
@@ -85,14 +127,14 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
             child: Padding(
               padding: EdgeInsets.all(22),
               child: Text(
-                'No hay monturas disponibles en el catálogo.',
+                'No hay monturas disponibles en el catÃƒÂ¡logo.',
                 textAlign: TextAlign.center,
               ),
             ),
           )
         else ...[
           Text(
-            'Así se verían contigo',
+            'AsÃƒÂ­ se verÃƒÂ­an contigo',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 5),
@@ -108,15 +150,15 @@ class _TryOnSelectionViewState extends State<TryOnSelectionView> {
               child: _RecommendationCard(
                 position: item.$1 + 1,
                 frame: item.$2,
-                facePhotoUrl: facePhotoUrl,
-                geometry: geometry,
+                facePhotoUrl: client.fotoFacialUrl!,
+                geometry: client.geometriaFacial!,
+                explanation: model.explanationFor(item.$2),
               ),
             ),
           ),
         ],
-        const SizedBox(height: 4),
         const Text(
-          'La posición se calcula con los ojos detectados. Para un resultado limpio, las imágenes de las monturas deben ser PNG con fondo transparente.',
+          'La posiciÃƒÂ³n se calcula con los ojos detectados. Para un resultado limpio, las monturas deben usar imÃƒÂ¡genes PNG con fondo transparente.',
           textAlign: TextAlign.center,
           style: TextStyle(color: Color(0xFF756765)),
         ),
@@ -131,18 +173,16 @@ class _RecommendationCard extends StatelessWidget {
     required this.frame,
     required this.facePhotoUrl,
     required this.geometry,
+    required this.explanation,
   });
-
   final int position;
   final Frame frame;
   final String facePhotoUrl;
   final FaceGeometry geometry;
-
+  final String explanation;
   @override
   Widget build(BuildContext context) {
-    final imageUrl = frame.imagenUrl?.trim();
-    final hasImage = imageUrl != null && imageUrl.isNotEmpty;
-
+    final url = frame.imagenUrl?.trim();
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -154,10 +194,10 @@ class _RecommendationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (hasImage)
+          if (url != null && url.isNotEmpty)
             VirtualFramePreview(
               facePhotoUrl: facePhotoUrl,
-              frameImageUrl: imageUrl,
+              frameImageUrl: url,
               geometry: geometry,
             )
           else
@@ -165,12 +205,7 @@ class _RecommendationCard extends StatelessWidget {
               aspectRatio: .75,
               child: ColoredBox(
                 color: AppTheme.blush,
-                child: Center(
-                  child: Text(
-                    'Esta montura no tiene imagen',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                child: Center(child: Text('Esta montura no tiene imagen')),
               ),
             ),
           Padding(
@@ -181,7 +216,7 @@ class _RecommendationCard extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: AppTheme.crimson,
                   foregroundColor: Colors.white,
-                  child: Text(position.toString()),
+                  child: Text('$position'),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -194,10 +229,13 @@ class _RecommendationCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '${frame.forma} • ${frame.color} • Talla ${frame.talla}',
+                        '${frame.forma} Ã¢â‚¬Â¢ ${frame.color} Ã¢â‚¬Â¢ Talla ${frame.talla} Ã¢â‚¬Â¢ ${frame.estilo}',
                       ),
-                      const SizedBox(height: 3),
-                      Text('Código: '),
+                      const SizedBox(height: 8),
+                      Text(
+                        explanation,
+                        style: const TextStyle(color: Color(0xFF756765)),
+                      ),
                     ],
                   ),
                 ),
@@ -208,4 +246,29 @@ class _RecommendationCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PreferenceDropdown extends StatelessWidget {
+  const _PreferenceDropdown({
+    required this.label,
+    required this.value,
+    required this.values,
+    required this.onChanged,
+  });
+  final String label, value;
+  final List<String> values;
+  final ValueChanged<String> onChanged;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: DropdownButtonFormField<String>(
+      initialValue: value.isEmpty ? '' : value,
+      decoration: InputDecoration(labelText: label),
+      items: [
+        const DropdownMenuItem(value: '', child: Text('Sin preferencia')),
+        ...values.map((v) => DropdownMenuItem(value: v, child: Text(v))),
+      ],
+      onChanged: (v) => onChanged(v ?? ''),
+    ),
+  );
 }

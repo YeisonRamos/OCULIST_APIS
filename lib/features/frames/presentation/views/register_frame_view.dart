@@ -21,6 +21,7 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
   final _shapeController = TextEditingController();
   final _materialController = TextEditingController();
   final _sizeController = TextEditingController();
+  final _styleController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _selectedImage;
 
@@ -33,6 +34,7 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
     _shapeController.dispose();
     _materialController.dispose();
     _sizeController.dispose();
+    _styleController.dispose();
     super.dispose();
   }
 
@@ -53,6 +55,7 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
       forma: _shapeController.text,
       material: _materialController.text,
       talla: _sizeController.text,
+      estilo: _styleController.text,
       imagePath: _selectedImage?.path,
     );
 
@@ -70,6 +73,7 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
       _shapeController.clear();
       _materialController.clear();
       _sizeController.clear();
+      _styleController.clear();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Montura registrada correctamente.')),
@@ -124,6 +128,15 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
                   'Nueva montura',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineSmall,
+                ),
+
+                _buildField(
+                  controller: _styleController,
+                  label: 'Estilo',
+                  icon: Icons.auto_awesome_outlined,
+                  viewModel: viewModel,
+                  fieldName:
+                      'el estilo (clásico, moderno, elegante, deportivo o casual)',
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -188,6 +201,14 @@ class _RegisterFrameViewState extends State<RegisterFrameView> {
                   fieldName: 'la talla',
                 ),
 
+                _buildField(
+                  controller: _styleController,
+                  label: 'Estilo',
+                  icon: Icons.auto_awesome_outlined,
+                  viewModel: viewModel,
+                  fieldName:
+                      'el estilo (clásico, moderno, elegante, deportivo o casual)',
+                ),
                 const SizedBox(height: 8),
 
                 if (_selectedImage != null)

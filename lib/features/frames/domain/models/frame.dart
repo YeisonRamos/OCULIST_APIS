@@ -8,6 +8,7 @@ class Frame {
     required this.forma,
     required this.material,
     required this.talla,
+    this.estilo = 'Sin definir',
     required this.disponible,
     required this.activo,
     required this.fechaRegistro,
@@ -22,6 +23,7 @@ class Frame {
   final String forma;
   final String material;
   final String talla;
+  final String estilo;
   final String? imagenUrl;
   final bool disponible;
   final bool activo;

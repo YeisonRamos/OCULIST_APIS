@@ -14,6 +14,7 @@ class FirestoreFrameService {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
     String? imagenUrl,
   }) async {
     final document = _firestore.collection('monturas').doc();
@@ -26,6 +27,7 @@ class FirestoreFrameService {
       'forma': forma,
       'material': material,
       'talla': talla,
+      'estilo': estilo,
       'disponible': true,
       'activo': true,
       'fechaRegistro': FieldValue.serverTimestamp(),
@@ -60,6 +62,7 @@ class FirestoreFrameService {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
   }) async {
     await _firestore.collection('monturas').doc(frameId).update({
       'codigo': codigo,
@@ -69,6 +72,7 @@ class FirestoreFrameService {
       'forma': forma,
       'material': material,
       'talla': talla,
+      'estilo': estilo,
     });
   }
 

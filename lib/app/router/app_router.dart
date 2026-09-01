@@ -32,6 +32,8 @@ import 'package:oculist/features/frames/presentation/view_models/edit_frame_view
 import 'package:oculist/features/frames/presentation/views/edit_frame_view.dart';
 import 'package:oculist/features/virtual_try_on/presentation/view_models/try_on_selection_view_model.dart';
 import 'package:oculist/features/virtual_try_on/presentation/views/try_on_selection_view.dart';
+import 'package:oculist/features/recommendation_rules/presentation/view_models/recommendation_rules_view_model.dart';
+import 'package:oculist/features/recommendation_rules/presentation/views/recommendation_rules_view.dart';
 
 final class AppRouter {
   const AppRouter._();
@@ -160,7 +162,7 @@ final class AppRouter {
 
           if (clientId == null || clientId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Cliente no válido.')),
+              body: Center(child: Text('Cliente no vÃ¡lido.')),
             );
           }
 
@@ -189,7 +191,7 @@ final class AppRouter {
           final clientId = state.pathParameters['clientId'];
           if (clientId == null || clientId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Cliente no válido.')),
+              body: Center(child: Text('Cliente no vÃ¡lido.')),
             );
           }
 
@@ -216,7 +218,7 @@ final class AppRouter {
 
           if (clientId == null || clientId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Cliente no válido.')),
+              body: Center(child: Text('Cliente no vÃ¡lido.')),
             );
           }
 
@@ -230,6 +232,15 @@ final class AppRouter {
         },
       ),
 
+      GoRoute(
+        path: '/configuracion/recomendacion',
+        redirect: (context, state) =>
+            _protectRoute(context, requiredRole: UserRole.administrador),
+        builder: (context, state) => ChangeNotifierProvider(
+          create: (_) => RecommendationRulesViewModel(),
+          child: const RecommendationRulesView(),
+        ),
+      ),
       GoRoute(
         path: '/monturas/registrar',
         name: 'registerFrame',
@@ -275,7 +286,7 @@ final class AppRouter {
 
           if (frameId == null || frameId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Montura no válida.')),
+              body: Center(child: Text('Montura no vÃ¡lida.')),
             );
           }
 
@@ -303,7 +314,7 @@ final class AppRouter {
 
           if (frameId == null || frameId.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text('Montura no válida.')),
+              body: Center(child: Text('Montura no vÃ¡lida.')),
             );
           }
 

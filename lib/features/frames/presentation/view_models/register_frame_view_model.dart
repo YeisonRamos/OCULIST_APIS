@@ -36,6 +36,7 @@ class RegisterFrameViewModel extends ChangeNotifier {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
     String? imagePath,
   }) async {
     if (_isSaving) {
@@ -56,6 +57,7 @@ class RegisterFrameViewModel extends ChangeNotifier {
         forma: forma,
         material: material,
         talla: talla,
+        estilo: estilo,
       );
 
       _createdFrame = frame;

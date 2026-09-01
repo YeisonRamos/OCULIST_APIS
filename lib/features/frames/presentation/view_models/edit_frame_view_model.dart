@@ -56,6 +56,7 @@ class EditFrameViewModel extends ChangeNotifier {
     required String forma,
     required String material,
     required String talla,
+    required String estilo,
   }) async {
     if (_isSaving) {
       return false;
@@ -75,6 +76,7 @@ class EditFrameViewModel extends ChangeNotifier {
         forma: forma,
         material: material,
         talla: talla,
+        estilo: estilo,
       );
 
       return true;

@@ -16,7 +16,7 @@ class AdministratorDashboardView extends StatelessWidget {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('No fue posible cerrar la sesión.')),
+      const SnackBar(content: Text('No fue posible cerrar la sesiÃƒÆ’Ã‚Â³n.')),
     );
   }
 
@@ -34,7 +34,8 @@ class AdministratorDashboardView extends StatelessWidget {
       actions: [
         DashboardAction(
           title: 'Registrar montura',
-          subtitle: 'Añade modelos y fotografías al catálogo',
+          subtitle:
+              'AÃƒÆ’Ã‚Â±ade modelos y fotografÃƒÆ’Ã‚Â­as al catÃƒÆ’Ã‚Â¡logo',
           icon: Icons.add_box_outlined,
           onTap: () => context.push('/monturas/registrar'),
         ),
@@ -44,6 +45,13 @@ class AdministratorDashboardView extends StatelessWidget {
           icon: Icons.people_outline_rounded,
           onTap: () => context.push('/clientes'),
         ),
+        DashboardAction(
+          title: 'Reglas de recomendación',
+          subtitle: 'Configura forma, talla, color y estilo',
+          icon: Icons.tune_rounded,
+          onTap: () => context.push('/configuracion/recomendacion'),
+        ),
+
         DashboardAction(
           title: 'Gestionar monturas',
           subtitle: 'Consulta, edita y controla disponibilidad',
