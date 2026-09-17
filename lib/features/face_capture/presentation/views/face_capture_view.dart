@@ -15,7 +15,9 @@ class FaceCaptureView extends StatefulWidget {
   State<FaceCaptureView> createState() => _FaceCaptureViewState();
 }
 
-class _FaceCaptureViewState extends State<FaceCaptureView>
+class _FaceCaptureViewState extends State<FaceCaptureView> 
+//LA CLASE controladora del widget FaceCaptureView, 
+//que maneja la lógica de captura y validación de la fotografía facial
     with WidgetsBindingObserver {
   CameraController? _controller;
   XFile? _capturedImage;
@@ -30,10 +32,11 @@ class _FaceCaptureViewState extends State<FaceCaptureView>
   final ImagePicker _imagePicker = ImagePicker();
 
   @override
-  void initState() {
+  void initState() { 
+    //sirve para inicializar el estado del widget y configurar la cámara
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initializeCamera();
+    _initializeCamera();  
   }
 
   @override

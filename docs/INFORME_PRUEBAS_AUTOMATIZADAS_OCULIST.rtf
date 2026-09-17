@@ -1,0 +1,80 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Calibri;}}
+\paperw11906\paperh16838\margl900\margr900\margt900\margb900
+\qc\b\fs36 INFORME BASICO DE PRUEBAS AUTOMATIZADAS\b0\par
+\b\fs28 Proyecto Oculist\b0\par
+\fs22 Aplicacion Flutter para gestion optica, clientes, monturas y recomendacion de monturas\par
+\fs20 Fecha: 7 de septiembre de 2026\par
+\par
+\ql\b\fs26 Resumen ejecutivo\b0\par
+\fs21 El proyecto presenta una base funcional organizada por funcionalidades y capas. La ejecucion encontro 11 pruebas automatizadas exitosas y ningun problema reportado por el analizador estatico de Flutter. La evidencia valida reglas de negocio, formularios, clientes, recomendacion de monturas y la pantalla inicial de autenticacion. No se realizaron pruebas de integracion contra Firebase real ni pruebas end-to-end en dispositivo fisico.\par
+\b\fs28 1. Objetivo y alcance\b0\par
+\fs21 El objetivo es analizar la configuracion de la herramienta de pruebas, el diseno de los casos automatizados y los resultados del proyecto Oculist. El alcance considera lib/, test/, pubspec.yaml, analysis_options.yaml y la ejecucion local de flutter test y flutter analyze.\par
+El sistema es una aplicacion Flutter con Firebase Authentication, Cloud Firestore y Firebase Storage. Integra camera, image_picker y Google ML Kit Face Detection. La interfaz usa GoRouter y Provider/ChangeNotifier.\par
+\b\fs24 Criterios de evaluacion\b0\par
+\fs20 \b Criterio\tab Evidencia\tab Resultado\b0\par
+Configuracion\tab Dependencias y comandos Flutter\tab Cumplido\par
+Diseno de casos\tab Repositorios falsos y aserciones\tab Cumplido parcialmente\par
+Ejecucion\tab flutter test y flutter analyze\tab Exito local\par
+Documentacion\tab Matriz y conclusiones\tab Incluida\par
+\b\fs28 2. Configuracion de la herramienta\b0\par
+\fs21 La herramienta principal es flutter_test. Las pruebas se ejecutan con flutter test y la calidad estatica con flutter analyze. analysis_options.yaml activa flutter_lints.\par
+El proyecto usa inyeccion de dependencias mediante interfaces de repositorio. En las pruebas, Firebase se sustituye por repositorios falsos para evitar credenciales, red y datos persistidos.\par
+\b\fs24 Dependencias relevantes\b0\par
+\fs20 \b Componente\tab Uso\tab Impacto\b0\par
+flutter_test\tab Pruebas unitarias y widget\tab 11 casos ejecutados\par
+Firebase\tab Usuarios, clientes, monturas y fotos\tab Aislado con falsos\par
+Provider\tab Estado y view models\tab Facilita pruebas\par
+GoRouter\tab Rutas protegidas\tab Cobertura indirecta\par
+Google ML Kit\tab Validacion facial\tab Requiere integracion\par
+\b\fs28 3. Diseno de los casos de prueba\b0\par
+\fs21 Los casos se enfocan en comportamientos observables y reglas de negocio. Se utilizan datos controlados y aserciones expect, por lo que un cambio incorrecto produce una falla automatica.\par
+\fs20 \b ID\tab Area\tab Caso\tab Tipo\b0\par
+TC-01\tab Autenticacion\tab Pantalla de inicio de sesion\tab Widget\par
+TC-02\tab Clientes\tab Nombres vacios\tab Unitario\par
+TC-03\tab Clientes\tab Telefono invalido\tab Unitario\par
+TC-04\tab Clientes\tab Registro exitoso\tab Unitario\par
+TC-05\tab Clientes\tab Carga de activos\tab Unitario\par
+TC-06\tab Clientes\tab Busqueda por nombre\tab Unitario\par
+TC-07\tab Clientes\tab Busqueda por telefono\tab Unitario\par
+TC-08\tab Clientes\tab Desactivacion\tab Unitario\par
+TC-09\tab Recomendacion\tab Rostro redondo\tab Unitario\par
+TC-10\tab Recomendacion\tab Rostro cuadrado\tab Unitario\par
+TC-11\tab Recomendacion\tab Rostro triangular\tab Unitario\par
+La seleccion cubre entradas invalidas, operaciones exitosas, filtrado, cambios de estado y recomendaciones para tres formas de rostro. Tambien verifica que no se recomienden monturas no disponibles.\par
+\b\fs28 4. Ejecucion y resultados\b0\par
+\fs21 La ejecucion se realizo en el entorno local del proyecto usando comandos estandar de Flutter.\par
+\fs20 \b Comando\tab Resultado\tab Interpretacion\b0\par
+flutter test\tab 00:07 +11: All tests passed!\tab 11 de 11 aprobados\par
+flutter analyze\tab No issues found! (ran in 7.5s)\tab Sin errores ni advertencias\par
+\b\fs24 Resumen cuantitativo\b0\par
+\fs20 \b Indicador\tab Valor\b0\par
+Casos ejecutados\tab 11\par
+Casos aprobados\tab 11\par
+Casos fallidos\tab 0\par
+Aprobacion\tab 100%\par
+Problemas estaticos\tab 0\par
+Firebase real durante tests\tab No\par
+El resultado confirma que el conjunto actual es estable en el entorno ejecutado. Los tiempos son referenciales y no constituyen una prueba formal de rendimiento.\par
+\b\fs28 5. Analisis tecnico\b0\par
+\b\fs24 Fortalezas identificadas\b0\par
+\fs21 La arquitectura separa presentacion, dominio y datos, permitiendo probar view models sin levantar Firebase. Los repositorios falsos hacen los casos deterministas y las aserciones validan resultados concretos.\par
+\b\fs24 Limitaciones y riesgos\b0\par
+\fs20 \b Aspecto\tab Riesgo\tab Prioridad\b0\par
+Firebase real\tab Reglas, permisos e indices no validados\tab Alta\par
+Captura facial\tab Sin evidencia de camara, ML Kit o imagenes reales\tab Alta\par
+Navegacion\tab Sin casos dedicados de roles\tab Media\par
+Otros view models\tab Cobertura incompleta\tab Media\par
+Rendimiento\tab Sin mediciones de carga o memoria\tab Baja\par
+El 100% de aprobacion no significa que todas las funcionalidades esten cubiertas.\par
+\b\fs28 6. Recomendaciones y conclusion\b0\par
+\b\fs24 Recomendaciones\b0\par
+\fs21 1. Incorporar pruebas de integracion con Firebase Emulator Suite.\par
+2. Agregar pruebas de widget para formularios, validaciones, carga y errores.\par
+3. Crear casos para redireccion por rol, usuario inactivo y rutas invalidas.\par
+4. Probar captura facial con imagenes controladas o una abstraccion del detector.\par
+5. Integrar flutter test y flutter analyze en integracion continua.\par
+\b\fs24 Conclusion\b0\par
+El proyecto Oculist cuenta con una configuracion funcional para pruebas automatizadas en Flutter. La ejecucion local produjo 11 casos aprobados de 11 y el analisis estatico no encontro problemas. El diseno con repositorios falsos es eficiente para validar reglas de negocio sin depender de servicios externos.\par
+Para una evaluacion completa se recomienda ampliar el alcance hacia Firebase, navegacion por roles, captura facial y pruebas de widget.\par
+}
